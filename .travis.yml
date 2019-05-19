@@ -2,7 +2,14 @@ language: java
 install: true
 
 jdk:
-  - oraclejdk8
+  - openjdk11
+
+services:
+  - docker
+
+before_script:
+  - export PATH=$(pwd)/bin:$PATH
+  - docker-compose -f ./scripts/stack.yml up &
 
 script:
   - ./gradlew build

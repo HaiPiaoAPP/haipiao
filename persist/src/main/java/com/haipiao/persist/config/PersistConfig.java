@@ -22,7 +22,7 @@ public class PersistConfig {
 
     @Value("${database.driverClassName:org.postgresql.Driver}")
     private String driverClassName;
-    @Value("${database.url:jdbc:postgresql://localhost:5432/postgres}")
+    @Value("${database.url:jdbc:postgresql://localhost:48375/postgres}")
     private String url;
     @Value("${database.username:postgres}")
     private String username;
