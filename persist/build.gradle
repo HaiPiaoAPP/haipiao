@@ -3,8 +3,3 @@ sourceSets {
         java.srcDirs = ['src/test/java/unit']
     }
 }
-
-dependencies {
-}
-
-

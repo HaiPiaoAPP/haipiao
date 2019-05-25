@@ -1,5 +1,4 @@
 language: java
-install: true
 
 jdk:
   - openjdk11
@@ -7,12 +6,15 @@ jdk:
 services:
   - docker
 
+install:
+  - ./scripts/install-dependencies.sh
+
 before_script:
   - export PATH=$(pwd)/bin:$PATH
   - docker-compose -f ./scripts/stack.yml up &
 
 script:
-  - ./gradlew build
+  - PROJECT_ROOT=$(pwd) ENV=dev ./gradlew build
 
 before_cache:
   - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock

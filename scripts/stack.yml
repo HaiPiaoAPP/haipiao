@@ -4,7 +4,7 @@ version: '3.1'
 services:
 
   db:
-    image: postgres
+    image: haipiaodev/hp-postgres:0.0.1
     restart: always
     ports:
       - 48375:5432

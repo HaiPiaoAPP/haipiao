@@ -17,7 +17,7 @@ import java.util.Collections;
 @Configuration
 @EnableTransactionManagement
 @EnableJpaRepositories(basePackages = {"com.haipiao.persist.repository"})
-//@PropertySource("${project.root}/deployment/config/dev/config.properties")
+@PropertySource("file:${PROJECT_ROOT}/deployment/config/${ENV}/config.properties")
 public class PersistConfig {
 
     @Value("${database.driverClassName:org.postgresql.Driver}")

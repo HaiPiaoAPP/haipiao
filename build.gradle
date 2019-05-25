@@ -7,9 +7,21 @@ buildscript {
     }
 }
 
+plugins {
+    id 'com.palantir.docker' version '0.22.1'
+}
+
 allprojects {
     apply plugin: 'idea'
     apply plugin: 'eclipse'
+
+    docker {
+        name 'haipiaodev/hp-postgres:0.0.1'
+        dockerfile project.file('./schemas/Dockerfile')
+        files './schemas/haipiao_schema_v1.sql'
+    }
+
+
 }
 
 subprojects {
@@ -18,21 +30,21 @@ subprojects {
 
     repositories {
         mavenCentral()
-    } 
+    }
 
     test {
         testLogging.events "PASSED", "FAILED", "SKIPPED"
-        testLogging.showStandardStreams = true
+        testLogging.showStandardStreams = false
+        systemProperty 'PROJECT_ROOT', project.rootDir.path
+        systemProperty 'ENV', 'dev'
     }
 
     dependencies {
         compile 'com.google.guava:guava:22.0'
-        compile 'org.projectlombok:lombok:1.18.0'
         compile 'org.hibernate:hibernate-core:5.4.2.Final'
         compile 'org.springframework.boot:spring-boot-starter-data-jpa:2.1.1.RELEASE'
-        compile group: 'org.postgresql', name: 'postgresql', version: '42.2.5'
+        compile 'org.postgresql:postgresql:42.2.5'
         testCompile 'junit:junit:4.12'
         testCompile 'org.springframework.boot:spring-boot-starter-test:2.1.1.RELEASE'
     }
-
 }

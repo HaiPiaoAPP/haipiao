@@ -55,7 +55,7 @@ create table article
     create_ts  timestamp,
     update_ts  timestamp,
     constraint article_pk primary key (article_id),
-    constraint article_fk1 foreign key (user_id) references users (user_id)
+    constraint article_fk1 foreign key (user_id) references hp_user (user_id)
 );
 
 create table image
@@ -66,7 +66,7 @@ create table image
     external_url        varchar(256),
     external_url_medium varchar(256),
     external_url_small  varchar(256),
-    hash_digest         bytea(32),
+    hash_digest         bytea,
     status              integer, -- 0: pending, 1: published, 2: inactive, 3 deleted
     create_ts           timestamp,
     update_ts           timestamp,
@@ -181,6 +181,6 @@ create table article_collect_relation
     create_ts                            timestamp,
     update_ts                            timestamp,
     constraint article_collect_relation_pk primary key (id),
-    constraint article_collect_relation_fk1 foreign key (collector_id) references users (user_id),
+    constraint article_collect_relation_fk1 foreign key (collector_id) references hp_user (user_id),
     constraint article_collect_relation_fk2 foreign key (article_id) references article (article_id)
 );
