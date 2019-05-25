@@ -15,12 +15,11 @@ public class UserRepositoryTest {
     @Autowired
     private UserRepository userRepository;
 
+
     @Test
     public void testSaveAndReadById() throws Exception {
         User user = new User();
-        System.out.println(userRepository.getClass());
         userRepository.findById(userRepository.save(user).getUserId());
-
     }
 
 }
