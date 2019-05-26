@@ -11,7 +11,7 @@ install:
 
 before_script:
   - export PATH=$(pwd)/bin:$PATH
-  - docker-compose -f ./scripts/stack.yml up &
+  - docker-compose -f ./scripts/stack.yml up > /dev/null &
 
 script:
   - PROJECT_ROOT=$(pwd) ENV=dev ./gradlew build
