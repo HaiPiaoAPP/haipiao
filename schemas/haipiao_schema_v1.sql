@@ -77,7 +77,7 @@ create table image
 create table topic
 (
     topic_id  serial,
-    tag_name  varchar(16),
+    topic_name  varchar(16),
     create_ts timestamp,
     update_ts timestamp,
     constraint topic_pk primary key (topic_id)
@@ -119,7 +119,8 @@ create table comment_reply (
     update_ts timestamp,
     constraint comment_reply_pk primary key (replier_id),
     constraint comment_reply_fk1 foreign key (article_id) references article (article_id),
-    constraint comment_reply_fk2 foreign key (replier_id) references hp_user (user_id)
+    constraint comment_reply_fk2 foreign key (replier_id) references hp_user (user_id),
+    constraint comment_reply_fk3 foreign key (comment_id) references comment (comment_id)
 );
 
 create table user_category_relation
@@ -147,7 +148,7 @@ create table user_following_relation
     constraint user_following_relation_fk2 foreign key (following_user_id) references hp_user (user_id)
 );
 
-create table album_article_relations
+create table album_article_relation
 (
     id         UUID,
     album_id   integer,

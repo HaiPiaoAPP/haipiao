@@ -3,7 +3,9 @@ package com.haipiao.persist.entity;
 import com.haipiao.persist.enums.Gender;
 
 import javax.persistence.*;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.Objects;
 
 @Entity
 @Table(name = "hp_user")
@@ -198,5 +200,61 @@ public class User extends BaseEntity {
 
     public void setSignature(String signature) {
         this.signature = signature;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        User user = (User) o;
+        return tcAccepted == user.tcAccepted &&
+            Objects.equals(userId, user.userId) &&
+            Arrays.equals(passwordDigest, user.passwordDigest) &&
+            Objects.equals(userName, user.userName) &&
+            Objects.equals(email, user.email) &&
+            Objects.equals(phone, user.phone) &&
+            Objects.equals(birthday, user.birthday) &&
+            gender == user.gender &&
+            Objects.equals(realName, user.realName) &&
+            Objects.equals(address1, user.address1) &&
+            Objects.equals(address2, user.address2) &&
+            Objects.equals(city, user.city) &&
+            Objects.equals(region, user.region) &&
+            Objects.equals(country, user.country) &&
+            Objects.equals(zipCode, user.zipCode) &&
+            Objects.equals(profileImgUrl, user.profileImgUrl) &&
+            Objects.equals(organization, user.organization) &&
+            Objects.equals(signature, user.signature);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = Objects.hash(userId, userName, email, phone, tcAccepted, birthday, gender, realName, address1, address2, city, region, country, zipCode, profileImgUrl, organization, signature);
+        result = 31 * result + Arrays.hashCode(passwordDigest);
+        return result;
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+            "userId=" + userId +
+            ", passwordDigest=" + Arrays.toString(passwordDigest) +
+            ", userName='" + userName + '\'' +
+            ", email='" + email + '\'' +
+            ", phone='" + phone + '\'' +
+            ", tcAccepted=" + tcAccepted +
+            ", birthday=" + birthday +
+            ", gender=" + gender +
+            ", realName='" + realName + '\'' +
+            ", address1='" + address1 + '\'' +
+            ", address2='" + address2 + '\'' +
+            ", city='" + city + '\'' +
+            ", region='" + region + '\'' +
+            ", country='" + country + '\'' +
+            ", zipCode='" + zipCode + '\'' +
+            ", profileImgUrl='" + profileImgUrl + '\'' +
+            ", organization='" + organization + '\'' +
+            ", signature='" + signature + '\'' +
+            '}';
     }
 }

@@ -4,23 +4,23 @@ import java.util.Arrays;
 
 public enum Gender {
 
-    MALE(0), FEMALE(1), UNKNOWN(2);
+    MALE("M"), FEMALE("F"), UNKNOWN("U");
 
-    Gender(int code) {
+    Gender(String code) {
         this.code = code;
     }
 
-    public int getCode() {
+    public String getCode() {
         return code;
     }
 
-    public static Gender findByCode(int code) {
+    public static Gender findByCode(String code) {
         return Arrays.stream(Gender.values())
-            .filter(e -> e.getCode() == code)
+            .filter(e -> e.getCode().equalsIgnoreCase(code))
             .findFirst()
             .orElse(null);
     }
 
-    private final int code;
+    private final String code;
 
 }

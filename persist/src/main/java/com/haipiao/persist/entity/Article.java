@@ -8,30 +8,39 @@ import javax.persistence.Id;
 import java.util.Objects;
 
 @Entity
-public class Comment extends BaseEntity {
+public class Article extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "comment_id")
-    private int commentId;
+    @Column(name = "article_id")
+    private int articleId;
+
+    private String title;
 
     @Column(name = "text_body")
     private String textBody;
 
     private int likes;
 
-    @Column(name = "article_id")
-    private int articleId;
+    private int collects;
 
-    @Column(name = "author_id")
+    @Column(name = "user_id")
     private int authorId;
 
-    public int getCommentId() {
-        return commentId;
+    public int getArticleId() {
+        return articleId;
     }
 
-    public void setCommentId(int commentId) {
-        this.commentId = commentId;
+    public void setArticleId(int articleId) {
+        this.articleId = articleId;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     public String getTextBody() {
@@ -50,12 +59,12 @@ public class Comment extends BaseEntity {
         this.likes = likes;
     }
 
-    public int getArticleId() {
-        return articleId;
+    public int getCollects() {
+        return collects;
     }
 
-    public void setArticleId(int articleId) {
-        this.articleId = articleId;
+    public void setCollects(int collects) {
+        this.collects = collects;
     }
 
     public int getAuthorId() {
@@ -70,28 +79,29 @@ public class Comment extends BaseEntity {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Comment that = (Comment) o;
-        return commentId == that.commentId &&
-            likes == that.likes &&
-            articleId == that.articleId &&
-            authorId == that.authorId &&
-            Objects.equals(textBody, that.textBody);
+        Article article = (Article) o;
+        return articleId == article.articleId &&
+            likes == article.likes &&
+            collects == article.collects &&
+            authorId == article.authorId &&
+            Objects.equals(title, article.title) &&
+            Objects.equals(textBody, article.textBody);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(commentId, textBody, likes, articleId, authorId);
+        return Objects.hash(articleId, title, textBody, likes, collects, authorId);
     }
 
     @Override
     public String toString() {
-        return "CommentReply{" +
-            "commentId=" + commentId +
+        return "Article{" +
+            "articleId=" + articleId +
+            ", title='" + title + '\'' +
             ", textBody='" + textBody + '\'' +
             ", likes=" + likes +
-            ", articleId=" + articleId +
+            ", collects=" + collects +
             ", authorId=" + authorId +
             '}';
     }
-
 }
