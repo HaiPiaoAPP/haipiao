@@ -7,6 +7,8 @@ import com.haipiao.persist.entity.Image;
 import com.haipiao.persist.entity.User;
 import com.haipiao.persist.enums.Gender;
 import com.haipiao.persist.enums.ImageStatus;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -16,6 +18,8 @@ import java.util.Random;
 
 public class TestObjectsFactory {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(TestObjectsFactory.class);
+
     private final Random random = new Random();
     private final MessageDigest digest;
 
@@ -23,6 +27,7 @@ public class TestObjectsFactory {
         try {
             this.digest = MessageDigest.getInstance("SHA-256");
         } catch (NoSuchAlgorithmException ex) {
+            LOGGER.error("Not implementation of SHA-256 found");
             throw new RuntimeException(ex);
         }
     }
