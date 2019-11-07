@@ -1,11 +1,16 @@
 package com.haipiao.registration.resp;
 
 import com.google.gson.annotations.SerializedName;
+import com.haipiao.common.enums.StatusCode;
 import com.haipiao.common.resp.AbstractResponse;
 
 import static com.haipiao.registration.resp.VerifySCResponse.Session;
 
 public class VerifySCResponse extends AbstractResponse<Session> {
+
+    public VerifySCResponse(StatusCode statusCode) {
+        super(statusCode);
+    }
 
     public static class Session {
 

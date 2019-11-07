@@ -1,9 +1,14 @@
 package com.haipiao.userservice.resp;
 
 import com.google.gson.annotations.SerializedName;
+import com.haipiao.common.enums.StatusCode;
 import com.haipiao.common.resp.AbstractResponse;
 
 public class GetUserResponse extends AbstractResponse<GetUserResponse.Data> {
+
+    public GetUserResponse(StatusCode statusCode) {
+        super(statusCode);
+    }
 
     public static class Data {
         @SerializedName("id")

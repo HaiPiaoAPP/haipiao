@@ -1,8 +1,7 @@
 package com.haipiao.userservice.handler;
 
 import com.google.gson.Gson;
-import com.haipiao.common.ErrorInfo;
-import com.haipiao.common.enums.ErrorCode;
+import com.haipiao.common.enums.StatusCode;
 import com.haipiao.common.exception.AppException;
 import com.haipiao.common.handler.AbstractHandler;
 import com.haipiao.common.redis.RedisClientWrapper;
@@ -40,7 +39,7 @@ public class CreateUserHandler extends AbstractHandler<CreateUserRequest, Create
                              Gson gson,
                              RedisClientWrapper redisClient,
                              UserRepository userRepository) {
-        super(sessionService);
+        super(CreateUserResponse.class, sessionService);
         this.gson = gson;
         this.redisClient = redisClient;
         this.userRepository = userRepository;
@@ -49,15 +48,15 @@ public class CreateUserHandler extends AbstractHandler<CreateUserRequest, Create
     @Override
     public CreateUserResponse execute(CreateUserRequest req) throws AppException {
         User user = new User();
-        CreateUserResponse resp = new CreateUserResponse();
+
 
         // TODO: validate username e.g. no duplicates
         user.setUserName(req.getName());
 
         Gender userGender = Gender.findByCode(req.getGender());
         if (userGender == null) {
-            resp.setSuccess(false);
-            resp.setErrorInfo(new ErrorInfo(ErrorCode.BAD_REQUEST, "invalid gender format"));
+            CreateUserResponse resp = new CreateUserResponse(StatusCode.BAD_REQUEST);
+            resp.setErrorMessage("invalid gender format");
             return resp;
         }
         user.setGender(userGender);
@@ -67,8 +66,8 @@ public class CreateUserHandler extends AbstractHandler<CreateUserRequest, Create
             date = formatter.parse(req.getBirthday());
             logger.debug("date={}", date);
         } catch (ParseException ex) {
-            resp.setSuccess(false);;
-            resp.setErrorInfo(new ErrorInfo(ErrorCode.BAD_REQUEST, "invalid date format"));
+            CreateUserResponse resp = new CreateUserResponse(StatusCode.BAD_REQUEST);
+            resp.setErrorMessage("invalid date format");
             return resp;
         }
         user.setBirthday(date);
@@ -81,11 +80,11 @@ public class CreateUserHandler extends AbstractHandler<CreateUserRequest, Create
         redisClient.delete(req.getOldSessionToken());
         SessionToken newSessionToken = sessionService.createUserSession(id);
 
+        CreateUserResponse resp = new CreateUserResponse(StatusCode.SUCCESS);
         CreateUserResponse.Data data = new CreateUserResponse.Data();
         resp.setData(data);
         data.setId(id);
         data.setSessionToken(newSessionToken.toString());
-        resp.setSuccess(true);
         return resp;
     }
 }

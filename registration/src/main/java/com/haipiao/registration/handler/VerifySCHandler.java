@@ -1,6 +1,5 @@
 package com.haipiao.registration.handler;
 
-import com.haipiao.common.ErrorInfo;
 import com.haipiao.common.enums.SecurityCodeType;
 import com.haipiao.common.exception.AppException;
 import com.haipiao.common.handler.AbstractHandler;
@@ -12,7 +11,8 @@ import com.haipiao.registration.resp.VerifySCResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import static com.haipiao.common.enums.ErrorCode.FORBIDDEN;
+import static com.haipiao.common.enums.StatusCode.FORBIDDEN;
+import static com.haipiao.common.enums.StatusCode.SUCCESS;
 
 @Component
 public class VerifySCHandler extends AbstractHandler<VerifySCRequest, VerifySCResponse> {
@@ -22,7 +22,7 @@ public class VerifySCHandler extends AbstractHandler<VerifySCRequest, VerifySCRe
 
     public VerifySCHandler(SessionService sessionService,
                            SecurityCodeManager securityCodeManager) {
-        super(sessionService);
+        super(VerifySCResponse.class, sessionService);
         this.securityCodeManager = securityCodeManager;
     }
 
@@ -30,13 +30,11 @@ public class VerifySCHandler extends AbstractHandler<VerifySCRequest, VerifySCRe
     public VerifySCResponse execute(VerifySCRequest request) throws AppException {
         SecurityCodeType type = SecurityCodeType.findByCode(request.getType());
         boolean validated = securityCodeManager.validateSecurityCode(request.getCell(), request.getSecurityCode(), type);
-        VerifySCResponse resp = new VerifySCResponse();
         if (!validated) {
-            resp.setSuccess(false);
-            resp.setErrorInfo(new ErrorInfo(FORBIDDEN, FORBIDDEN.getDefaultMessage()));
-            return resp;
+            return new VerifySCResponse(FORBIDDEN);
         }
-        resp.setSuccess(true);
+
+        VerifySCResponse resp = new VerifySCResponse(SUCCESS);
         SessionToken sessionToken;
         switch (type) {
             case REGISTRATION:

@@ -2,8 +2,7 @@ package com.haipiao.articleservice.handler;
 
 import com.haipiao.articleservice.dto.req.GetArticleRequest;
 import com.haipiao.articleservice.dto.resp.GetArticleResponse;
-import com.haipiao.common.ErrorInfo;
-import com.haipiao.common.enums.ErrorCode;
+import com.haipiao.common.enums.StatusCode;
 import com.haipiao.common.handler.AbstractHandler;
 import com.haipiao.common.service.SessionService;
 import com.haipiao.persist.entity.Article;
@@ -20,6 +19,7 @@ import com.haipiao.persist.repository.TopicRepository;
 import com.haipiao.persist.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -52,7 +52,7 @@ public class GetArticleHandler extends AbstractHandler<GetArticleRequest, GetArt
         ArticleTopicRepository articleTopicRepository,
         ImageRepository imageRepository,
         TagRepository tagRepository) {
-        super(sessionService);
+        super(GetArticleResponse.class, sessionService);
         this.articleRepository = articleRepository;
         this.userRepository = userRepository;
         this.topicRepository = topicRepository;
@@ -63,19 +63,19 @@ public class GetArticleHandler extends AbstractHandler<GetArticleRequest, GetArt
 
     @Override
     public GetArticleResponse execute(GetArticleRequest req) {
-        GetArticleResponse resp = new GetArticleResponse();
-        GetArticleResponse.ArticleData data = new GetArticleResponse.ArticleData();
+
         Article article;
         int articleID = req.getId();
         Optional<Article> optionalArticle = articleRepository.findById(articleID);
         if(optionalArticle.isPresent()) {
             article = optionalArticle.get();
         } else {
-            resp.setSuccess(false);
-            resp.setErrorInfo(new ErrorInfo(ErrorCode.NOT_FOUND, String.format("article %s not found in DB", articleID)));
+            GetArticleResponse resp = new GetArticleResponse(StatusCode.NOT_FOUND);
+            resp.setErrorMessage(String.format("article %s not found in DB", articleID));
             return resp;
         }
 
+        GetArticleResponse.ArticleData data = new GetArticleResponse.ArticleData();
         data.setId(articleID);
         data.setTitle(article.getTitle());
         data.setText(article.getTextBody());
@@ -90,8 +90,8 @@ public class GetArticleHandler extends AbstractHandler<GetArticleRequest, GetArt
         if(optionalUser.isPresent()) {
             user = optionalUser.get();
         } else {
-            resp.setSuccess(false);
-            resp.setErrorInfo(new ErrorInfo(ErrorCode.NOT_FOUND, String.format("user %s not found in DB", authorID)));
+            GetArticleResponse resp = new GetArticleResponse(StatusCode.NOT_FOUND);
+            resp.setErrorMessage(String.format("user %s not found in DB", authorID));
             return resp;
         }
         GetArticleResponse.ArticleData.Author author = new GetArticleResponse.ArticleData.Author();
@@ -115,8 +115,8 @@ public class GetArticleHandler extends AbstractHandler<GetArticleRequest, GetArt
             if (optionalTopic.isPresent()) {
                 topic = optionalTopic.get();
             } else {
-                resp.setSuccess(false);
-                resp.setErrorInfo(new ErrorInfo(ErrorCode.NOT_FOUND, String.format("topic %s not found in DB", topicID)));
+                GetArticleResponse resp = new GetArticleResponse(StatusCode.NOT_FOUND);
+                resp.setErrorMessage(String.format("topic %s not found in DB", topicID));
                 return resp;
             }
             topics[i].setName(topic.getTopicName());
@@ -155,7 +155,7 @@ public class GetArticleHandler extends AbstractHandler<GetArticleRequest, GetArt
         data.setCollected(true);
         data.setLiked(true);
 
-        resp.setSuccess(true);
+        GetArticleResponse resp = new GetArticleResponse(StatusCode.SUCCESS);
         resp.setData(data);
         return resp;
     }

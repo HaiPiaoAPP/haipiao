@@ -1,7 +1,6 @@
 package com.haipiao.registration.handler;
 
 
-import com.haipiao.common.ErrorInfo;
 import com.haipiao.common.enums.SecurityCodeType;
 import com.haipiao.common.handler.AbstractHandler;
 import com.haipiao.common.service.SessionService;
@@ -11,7 +10,8 @@ import com.haipiao.registration.resp.VendSCResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import static com.haipiao.common.enums.ErrorCode.THROTTLED;
+import static com.haipiao.common.enums.StatusCode.SUCCESS;
+import static com.haipiao.common.enums.StatusCode.THROTTLED;
 
 @Component
 public class VendSCHandler extends AbstractHandler<VendSCRequest, VendSCResponse> {
@@ -21,22 +21,19 @@ public class VendSCHandler extends AbstractHandler<VendSCRequest, VendSCResponse
 
     public VendSCHandler(SessionService sessionService,
                          SecurityCodeManager securityCodeManager) {
-        super(sessionService);
+        super(VendSCResponse.class, sessionService);
         this.securityCodeManager = securityCodeManager;
     }
 
     @Override
     public VendSCResponse execute(VendSCRequest request) {
-        String sc = securityCodeManager.getSecurityCode(
-            request.getCell(), SecurityCodeType.findByCode(request.getType()));
-        VendSCResponse resp = new VendSCResponse();
-        if (sc != null) {
-            resp.setSuccess(true);
-            resp.setSecurityCode(sc);
-        } else {
-            resp.setSuccess(false);
-            resp.setErrorInfo(new ErrorInfo(THROTTLED, THROTTLED.getDefaultMessage()));
+        final String sc = securityCodeManager.getSecurityCode(request.getCell(),
+            SecurityCodeType.findByCode(request.getType()));
+        if (sc == null) {
+            return new VendSCResponse(THROTTLED);
         }
+        VendSCResponse resp = new VendSCResponse(SUCCESS);
+        resp.setSecurityCode(sc);
         return resp;
     }
 }

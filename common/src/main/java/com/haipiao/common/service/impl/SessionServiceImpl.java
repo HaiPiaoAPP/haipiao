@@ -3,7 +3,7 @@ package com.haipiao.common.service.impl;
 import com.google.common.base.Preconditions;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
-import com.haipiao.common.enums.ErrorCode;
+import com.haipiao.common.enums.StatusCode;
 import com.haipiao.common.exception.AppException;
 import com.haipiao.common.redis.RedisClientWrapper;
 import com.haipiao.common.service.SessionService;
@@ -53,7 +53,7 @@ public class SessionServiceImpl implements SessionService {
                 .map(cachedVal -> gson.fromJson(cachedVal, UserSessionInfo.class))
                 .orElse(null);
         } catch (JsonSyntaxException ex) {
-            throw new AppException(ErrorCode.INTERNAL_SERVER_ERROR, ex);
+            throw new AppException(StatusCode.INTERNAL_SERVER_ERROR, ex);
         }
 
         // Session exists.
@@ -68,7 +68,7 @@ public class SessionServiceImpl implements SessionService {
         Preconditions.checkNotNull(persistedSession.getValidatorDigest());
         byte[] validatorDigest = SessionUtils.getValidatorDigest(parsedSessionToken.getValidator());
         if (Arrays.equals(validatorDigest, persistedSession.getValidatorDigest())) {
-            throw new AppException(ErrorCode.UNAUTHORIZED);
+            throw new AppException(StatusCode.UNAUTHORIZED);
         }
 
         userSessionInfo =  new UserSessionInfo();
@@ -84,7 +84,7 @@ public class SessionServiceImpl implements SessionService {
             redisClient.set(sessionToken.toString(), "{}"); // create
             LOGGER.debug("Created temporary session. sessionToken={}", sessionToken.toString());
         } catch (Exception ex) {
-            throw new AppException(ErrorCode.INTERNAL_SERVER_ERROR, ex);
+            throw new AppException(StatusCode.INTERNAL_SERVER_ERROR, ex);
         }
         return sessionToken;
     }
@@ -106,7 +106,7 @@ public class SessionServiceImpl implements SessionService {
             userSession.setValidatorDigest(SessionUtils.getValidatorDigest(sessionToken.getValidator()));
             userSessionRepository.save(userSession);
         } catch (Exception ex) {
-            throw new AppException(ErrorCode.INTERNAL_SERVER_ERROR, ex);
+            throw new AppException(StatusCode.INTERNAL_SERVER_ERROR, ex);
         }
         return sessionToken;
     }
@@ -124,7 +124,7 @@ public class SessionServiceImpl implements SessionService {
             userSession.setValidatorDigest(SessionUtils.getValidatorDigest(sessionToken.getValidator()));
             userSessionRepository.save(userSession);
         } catch (Exception ex) {
-            throw new AppException(ErrorCode.INTERNAL_SERVER_ERROR, ex);
+            throw new AppException(StatusCode.INTERNAL_SERVER_ERROR, ex);
         }
         return sessionToken;
     }

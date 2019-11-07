@@ -2,6 +2,7 @@ package com.haipiao.userservice.handler;
 
 import com.google.gson.Gson;
 import com.haipiao.common.config.CommonConfig;
+import com.haipiao.common.enums.StatusCode;
 import com.haipiao.common.redis.RedisClientWrapper;
 import com.haipiao.common.service.SessionService;
 import com.haipiao.persist.repository.UserRepository;
@@ -64,14 +65,14 @@ public class UserHandlerTest {
         createReq.setBirthday("31/12/1999");
         createReq.setGender("F");
         ResponseEntity<CreateUserResponse> createResp = createUserHandler.handle(createReq);
-        assertTrue(createResp.getBody().isSuccess());
+        assertTrue(createResp.getBody().getStatusCode() == StatusCode.SUCCESS);
         assertNotNull(createResp.getBody().getData().getId());
 
         int id = createResp.getBody().getData().getId();
         GetUserRequest getReq = new GetUserRequest();
         getReq.setId(id);
         ResponseEntity<GetUserResponse> getResp = getUserHandler.handle(getReq);
-        assertTrue(getResp.getBody().isSuccess());
+        assertTrue(createResp.getBody().getStatusCode() == StatusCode.SUCCESS);
         assertEquals(getResp.getBody().getData().getName(), "Alice");
     }
 }

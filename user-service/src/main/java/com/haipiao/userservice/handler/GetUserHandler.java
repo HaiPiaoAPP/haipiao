@@ -1,7 +1,5 @@
 package com.haipiao.userservice.handler;
 
-import com.haipiao.common.ErrorInfo;
-import com.haipiao.common.enums.ErrorCode;
 import com.haipiao.common.handler.AbstractHandler;
 import com.haipiao.common.service.SessionService;
 import com.haipiao.persist.entity.User;
@@ -13,6 +11,9 @@ import org.springframework.stereotype.Component;
 
 import java.util.Optional;
 
+import static com.haipiao.common.enums.StatusCode.NOT_FOUND;
+import static com.haipiao.common.enums.StatusCode.SUCCESS;
+
 @Component
 public class GetUserHandler extends AbstractHandler<GetUserRequest, GetUserResponse>  {
     @Autowired
@@ -20,13 +21,12 @@ public class GetUserHandler extends AbstractHandler<GetUserRequest, GetUserRespo
 
     public GetUserHandler(SessionService sessionService,
                           UserRepository userRepository) {
-        super(sessionService);
+        super(GetUserResponse.class, sessionService);
         this.userRepository = userRepository;
     }
 
     @Override
     public GetUserResponse execute(GetUserRequest req) {
-        GetUserResponse resp = new GetUserResponse();
         GetUserResponse.Data data = new GetUserResponse.Data();
 
         int userID = req.getId() != null ? req.getId() : req.getLoggedInUserId();
@@ -35,8 +35,8 @@ public class GetUserHandler extends AbstractHandler<GetUserRequest, GetUserRespo
         if(optionalUser.isPresent()) {
             user = optionalUser.get();
         } else {
-            resp.setSuccess(false);
-            resp.setErrorInfo(new ErrorInfo(ErrorCode.NOT_FOUND, String.format("user %s not found in DB", userID)));
+            GetUserResponse resp = new GetUserResponse(NOT_FOUND);
+            resp.setErrorMessage(String.format("user %s not found in DB", userID));
             return resp;
         }
 
@@ -58,7 +58,7 @@ public class GetUserHandler extends AbstractHandler<GetUserRequest, GetUserRespo
         // TODO: set level
         // data.setLevel();
 
-        resp.setSuccess(true);
+        GetUserResponse resp = new GetUserResponse(SUCCESS);
         resp.setData(data);
         return resp;
     }

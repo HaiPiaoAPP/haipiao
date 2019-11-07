@@ -1,7 +1,8 @@
 package com.haipiao.common.enums;
 
-public enum ErrorCode {
+public enum StatusCode {
 
+    SUCCESS("success"),
     BAD_REQUEST("bad request body"),
     UNAUTHORIZED("unauthorized request"),
     FORBIDDEN("forbidden"),
@@ -9,7 +10,7 @@ public enum ErrorCode {
     THROTTLED("request throttled"),
     NOT_FOUND("entity requested not found");
 
-    ErrorCode(String defaultMessage) {
+    StatusCode(String defaultMessage) {
         this.defaultMessage = defaultMessage;
     }
 

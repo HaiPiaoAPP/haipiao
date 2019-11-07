@@ -7,6 +7,7 @@ import com.haipiao.articleservice.dto.req.GetArticleRequest;
 import com.haipiao.articleservice.dto.resp.CreateArticleResponse;
 import com.haipiao.articleservice.dto.resp.GetArticleResponse;
 import com.haipiao.common.config.CommonConfig;
+import com.haipiao.common.enums.StatusCode;
 import com.haipiao.common.service.SessionService;
 import com.haipiao.persist.entity.User;
 import com.haipiao.persist.repository.ArticleRepository;
@@ -130,14 +131,14 @@ public class ArticleHandlerTest {
         createReq.setImages(images);
 
         ResponseEntity<CreateArticleResponse> createResp = createArticleHandler.handle(createReq);
-        assertTrue(createResp.getBody().isSuccess());
+        assertTrue(createResp.getBody().getStatusCode() == StatusCode.SUCCESS);
         assertNotNull(createResp.getBody().getData().getId());
 
         int id = createResp.getBody().getData().getId();
         GetArticleRequest getReq = new GetArticleRequest();
         getReq.setId(id);
         ResponseEntity<GetArticleResponse> getResp = getArticleHandler.handle(getReq);
-        assertTrue(getResp.getBody().isSuccess());
+        assertTrue(createResp.getBody().getStatusCode() == StatusCode.SUCCESS);
         assertNotNull(getResp.getBody().getData().getAuthor());
         GetArticleResponse.ArticleData.Image[] actualImages = getResp.getBody().getData().getImages();
         assertEquals(images.length, actualImages.length);

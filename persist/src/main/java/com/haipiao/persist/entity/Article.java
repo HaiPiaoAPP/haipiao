@@ -23,7 +23,7 @@ public class Article extends BaseEntity {
     private String textBody;
 
     // 1: images, 2: video
-    private int type;
+    private int type; // FIX ME, use enum type
 
     private int likes;
 

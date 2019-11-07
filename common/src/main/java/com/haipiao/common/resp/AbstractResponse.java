@@ -1,35 +1,36 @@
 package com.haipiao.common.resp;
 
 import com.google.gson.annotations.SerializedName;
-import com.haipiao.common.ErrorInfo;
+import com.haipiao.common.enums.StatusCode;
 
 import java.io.Serializable;
+import java.util.StringJoiner;
 
 public abstract class AbstractResponse<T> implements Serializable {
 
-    @SerializedName("success")
-    private boolean success;
+    @SerializedName("status_code")
+    private final StatusCode statusCode;
 
-    @SerializedName("error_info")
-    private ErrorInfo errorInfo;
+    @SerializedName("error_message")
+    private String errorMessage;
 
     @SerializedName("data")
     private T data;
 
-    public boolean isSuccess() {
-        return success;
+    public AbstractResponse(StatusCode statusCode) {
+        this.statusCode = statusCode;
     }
 
-    public void setSuccess(boolean success) {
-        this.success = success;
+    public StatusCode getStatusCode() {
+        return statusCode;
     }
 
-    public ErrorInfo getErrorInfo() {
-        return errorInfo;
+    public String getErrorMessage() {
+        return errorMessage;
     }
 
-    public void setErrorInfo(ErrorInfo errorInfo) {
-        this.errorInfo = errorInfo;
+    public void setErrorMessage(String errorMessage) {
+        this.errorMessage = errorMessage;
     }
 
     public T getData() {
@@ -40,4 +41,12 @@ public abstract class AbstractResponse<T> implements Serializable {
         this.data = data;
     }
 
+    @Override
+    public String toString() {
+        return new StringJoiner(", ", AbstractResponse.class.getSimpleName() + "[", "]")
+            .add("statusCode=" + statusCode)
+            .add("errorMessage='" + errorMessage + "'")
+            .add("data=" + data)
+            .toString();
+    }
 }

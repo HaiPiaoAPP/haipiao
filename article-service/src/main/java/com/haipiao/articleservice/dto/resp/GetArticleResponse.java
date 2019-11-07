@@ -3,9 +3,14 @@ package com.haipiao.articleservice.dto.resp;
 import com.google.gson.annotations.SerializedName;
 import com.haipiao.articleservice.dto.common.Tag;
 import com.haipiao.articleservice.dto.common.Topic;
+import com.haipiao.common.enums.StatusCode;
 import com.haipiao.common.resp.AbstractResponse;
 
 public class GetArticleResponse extends AbstractResponse<GetArticleResponse.ArticleData> {
+
+    public GetArticleResponse(StatusCode statusCode) {
+        super(statusCode);
+    }
 
     public static class ArticleData {
         @SerializedName("id")

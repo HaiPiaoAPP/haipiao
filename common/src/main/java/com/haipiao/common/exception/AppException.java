@@ -1,32 +1,32 @@
 package com.haipiao.common.exception;
 
-import com.haipiao.common.enums.ErrorCode;
+import com.haipiao.common.enums.StatusCode;
 
 public class AppException extends Exception {
 
-    private ErrorCode errorCode;
+    private StatusCode statusCode;
 
-    public ErrorCode getErrorCode() {
-        return errorCode;
+    public StatusCode getStatusCode() {
+        return statusCode;
     }
 
     private AppException() {
         super();
     }
 
-    public AppException(ErrorCode errorCode) {
+    public AppException(StatusCode statusCode) {
         super();
-        this.errorCode = errorCode;
+        this.statusCode = statusCode;
     }
 
-    public AppException(ErrorCode errorCode, Throwable cause) {
+    public AppException(StatusCode statusCode, Throwable cause) {
         super(cause);
-        this.errorCode = errorCode;
+        this.statusCode = statusCode;
     }
 
-    public AppException(ErrorCode errorCode, String message, Throwable cause) {
+    public AppException(StatusCode statusCode, String message, Throwable cause) {
         super(message, cause);
-        this.errorCode = errorCode;
+        this.statusCode = statusCode;
     }
 
 }

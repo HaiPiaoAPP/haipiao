@@ -2,6 +2,7 @@ package com.haipiao.articleservice.handler;
 
 import com.haipiao.articleservice.dto.req.CreateArticleRequest;
 import com.haipiao.articleservice.dto.resp.CreateArticleResponse;
+import com.haipiao.common.enums.StatusCode;
 import com.haipiao.common.handler.AbstractHandler;
 import com.haipiao.common.service.SessionService;
 import com.haipiao.persist.entity.Article;
@@ -45,7 +46,7 @@ public class CreateArticleHandler extends AbstractHandler<CreateArticleRequest, 
             ArticleTopicRepository articleTopicRepository,
             ImageRepository imageRepository,
             TagRepository tagRepository){
-        super(sessionService);
+        super(CreateArticleResponse.class, sessionService);
         this.articleRepository = articleRepository;
         this.topicRepository = topicRepository;
         this.articleTopicRepository = articleTopicRepository;
@@ -121,10 +122,9 @@ public class CreateArticleHandler extends AbstractHandler<CreateArticleRequest, 
             articleTopicRepository.save(articleTopic);
         }
 
-        CreateArticleResponse resp = new CreateArticleResponse();
+        CreateArticleResponse resp = new CreateArticleResponse(StatusCode.SUCCESS);
         CreateArticleResponse.Data data = new CreateArticleResponse.Data();
         data.setId(article.getArticleId());
-        resp.setSuccess(true);
         resp.setData(data);
         return resp;
     }
