@@ -717,15 +717,384 @@ topic_related_latest对应蓝湖图54（点击最新）；
 - `UNAUTHORIZED`: 用户未登录或者session token不合法。
 - `INTERNAL_SERVER_ERROR`: 未知服务器错误。
 
-## TODO: complete APIs below
-
 ### 15. 获取关注用户的更新
 
 检查当前用户所关注的用户是否有更新
 
-check：检查是否有更新
+check：用户的关注是否有更新。用于显示蓝湖图10关注标签上的小红点。
 
-pull： 获取所有更新信息
+pull： 获取用户的关注的对象们的更新列表。
+
+**URL**: `/update/following?type=[check|pull]`
+
+**Method**: GET
+
+**Parameters**:
+
+| Name | Type        | Required | Description                         |
+| ---- | ----------- | -------- | ----------------------------------- |
+| type | String  | Yes      | "check"或者"pull" |
+
+**Required headers**: `Cookie: session-token=<token>`
+
+**Response body**:
+
+**Success**:
+
+check:
+```javascript
+{
+  "status_code": "SUCCESS",
+  "data": {
+    "updated": true
+  }
+}
+```
+
+pull:
+image tag中的x和y都是int，x表示的浮点数是0.001*x。
+```javascript
+{
+  "status_code": "SUCCESS",
+  "data": {
+    "articles": [
+      {
+        "id": 123,
+        "title": "学习和工作",
+        "author": {
+          "id": 234,
+          "name": "小明",
+          "profile_image_url": "aliyun-abc.oss-cn-hangzhou.aliyuncs.com/user/1234.jpg"
+        },
+        "images": [
+          {
+            "url": "aliyun-abc.oss-cn-hangzhou.aliyuncs.com/image/1234.jpg",
+            "tags": [
+              {
+                "text": "",
+                "x": "1234", // 用int来表示定点小数，表示0.1234
+                "y": "345" // 用int来表示定点小数，表示0.0345
+              },
+              {...}
+            ]
+          },
+          {...}
+        ],
+        "topics": ["学习", "工作"]        
+        "collects": 15,
+        "collected": false,
+        "likes": 120,
+        "liked": false,
+        "shares": 28,
+        "comments": {
+          "total_count": 23, 
+          "items": [
+            {
+              "commenter_name": "小红",
+              "commenter_id": 46, // user id
+              "comment": "好赞呀！"
+            },
+            {...}
+          ]
+        }
+      },
+      {...}
+    ]
+  }
+}
+```
+
+**Fail**
+
+```javascript
+{
+  "status_code": <String>,
+  "error_message": <String>
+}
+```
+
+**Possible error codes**:
+
+- `BAD_REQUEST`: query parameter不存在或不合法。
+- `UNAUTHORIZED`: session token不存在或不合法。
+- `INTERNAL_SERVER_ERROR`: 未知服务器错误。
+
+### 16. 加载文章
+
+包含是否本人已点赞和已收藏
+
+**URL**: `/article/{id}`
+
+**Method**: GET
+
+**Parameters**:
+
+| Name | Type        | Required | Description                         |
+| ---- | ----------- | -------- | ----------------------------------- |
+| type | String  | Yes      | "check"或者"pull" |
+
+**Required headers**: `Cookie: session-token=<token>`
+
+**Response body**:
+
+**Success**:
+
+tag中的x和y都是int，x表示的浮点数是0.001*x。
+```javascript
+{
+  "status_code": "SUCCESS",
+  "data": {
+    "article": {
+      "id": 123,
+      "title": "学习和工作",
+      "author": {
+        "id": 234,
+        "name": "小明",
+        "profile_image_url": "aliyun-abc.oss-cn-hangzhou.aliyuncs.com/user/1234.jpg"
+      },
+      "images": [
+        {
+          "url": "aliyun-abc.oss-cn-hangzhou.aliyuncs.com/image/1234.jpg",
+          "tags": [
+            {
+              "text": "",
+              "x": "1234", // 用int来表示定点小数，表示0.1234
+              "y": "345" // 用int来表示定点小数，表示0.0345
+            },
+            {...}
+          ]
+        },
+        {...}
+      ],
+      "topics": ["学习", "工作"]      
+      "collects": 15,
+      "collected": false,
+      "likes": 120,
+      "liked": false,
+      "shares": 28,
+      "comments": {
+        "total_count": 23, 
+        "items": [
+          {
+            "commenter_name": "小红",
+            "commenter_id": 46, // user id
+            "comment": "好赞呀！"
+          },
+          {...}
+        ]
+      }
+      }
+  }
+}
+```
+
+**Fail**
+
+```javascript
+{
+  "status_code": <String>,
+  "error_message": <String>
+}
+```
+
+**Possible error codes**:
+
+- `BAD_REQUEST`: query parameter不存在或不合法。
+- `UNAUTHORIZED`: session token不存在或不合法。
+- `INTERNAL_SERVER_ERROR`: 未知服务器错误。
+
+### 17.  获取用户分组
+
+获取当前用户所创建的所有“分组”。
+蓝湖图13。
+
+**URL**: `/user/{id}/group`
+
+**Method**: GET
+
+**Required headers**: `Cookie: session-token=<token>`
+
+**Response body**:
+
+**Success**:
+
+```javascript
+{
+  "status_code": "SUCCESS",
+  "data": {
+    "groups": [
+      {
+        "id": "374",
+        "name": "朋友"
+      },
+      {
+        "id": "737",
+        "name": "有趣"
+      },
+    ]
+  }
+}
+```
+
+**Fail**
+
+```javascript
+{
+  "status_code": <String>,
+  "error_message": <String>
+}
+```
+
+**Possible error codes**:
+
+- `UNAUTHORIZED`: session token不存在或不合法。
+- `INTERNAL_SERVER_ERROR`: 未知服务器错误。
+
+### 18. 获取默认分组
+
+获取系统的默认分组。
+蓝湖图13。
+
+**URL**: `/user/{id}/group`
+
+**Method**: GET
+
+**Required headers**: `Cookie: session-token=<token>`
+
+**Response body**:
+
+**Success**:
+
+```javascript
+{
+  "status_code": "SUCCESS",
+  "data": {
+    "groups": [
+      {
+        "id": "143",
+        "name": "全部关注"
+      },
+      {
+        "id": "482",
+        "name": "特别关注"
+      },
+    ]
+  }
+}
+```
+
+**Fail**
+
+```javascript
+{
+  "status_code": <String>,
+  "error_message": <String>
+}
+```
+
+**Possible error codes**:
+
+- `UNAUTHORIZED`: session token不存在或不合法。
+- `INTERNAL_SERVER_ERROR`: 未知服务器错误。
+
+### 19. 删除分组
+
+需要检查分组是否属于该用户。
+
+**URL**: `/group/{id}`
+
+**Method**: DELETE
+
+**Required headers**: `Cookie: session-token=<token>`
+
+**Success**:
+
+```javascript
+{
+  "status_code": "SUCCESS",
+}
+```
+
+**Fail**
+
+```javascript
+{
+  "status_code": <String>,
+  "error_message": <String>
+}
+```
+
+**Possible error codes**:
+
+- `UNAUTHORIZED`: 用户未登录或者session token不合法。
+- `INTERNAL_SERVER_ERROR`: 未知服务器错误。
+
+### 20. 新建分组
+
+为某用户新建关注分组。
+蓝湖图14。
+
+**URL**: `/group`
+
+**Method**: POST
+
+**Required headers**: `Cookie: session-token=<token>`
+
+**Request Body**
+
+创建一个分组的时候，可以带上一个用户ID，该ID会被加入到该分组
+
+```javascript
+{
+  "user_id": 984, // 可缺省，另一个用户的user id
+  "group_name": "同学"
+}
+```
+
+**Success**:
+
+```javascript
+{
+  "status_code": "SUCCESS",
+}
+```
+
+**Fail**
+
+```javascript
+{
+  "status_code": <String>,
+  "error_message": <String>
+}
+```
+
+**Possible error codes**:
+
+- `BAD_REQUEST`: request格式不合法。
+- `UNAUTHORIZED`: 用户未登录或者session token不合法。
+- `INTERNAL_SERVER_ERROR`: 未知服务器错误。
+
+## TODO: complete APIs below
+
+## 用户模块API
+
+
+## 搜索系统API
+
+搜索系统需要搭建elastic search或Solr。
+
+### XX. 搜索文章 
+
+### XX. 搜索话题
+
+### XX. 搜索用户 (21)
+
+### XX. 获取热搜列表（前N）（16）
+
+### XX. 自动补全 （17）
+
+
+## 通知系统API
 
 ### 16. 通知是否有更新
 
@@ -735,31 +1104,6 @@ check：检查是否有更新
 
 pull： 获取所有更新信息
 
-### 17. 加载文章
-
-包含是否本人已点赞和已收藏
-
-### 18.  获取用户分组
-
-获取当前用户所创建的所有“分组”
-
-### 19. 获取默认分组
-
-获取系统的默认分组
-
-### 20. 删除分组
-
-### 21. 新建分组
-
-### 22. 获取热搜列表（前N）（16）
-
-### 23. 自动补全 （17）
-
-### 24. 搜索文章 
-
-### 25. 搜索话题
-
-### 26. 搜索用户 (21)
 
 ### 27. 举报违规文章 (21)
 
@@ -769,7 +1113,7 @@ pull： 获取所有更新信息
 
 ### 31. 获取用户所有文章
 
-###  32. 更改以关注用户的分组
+###  32. 更改已关注用户的分组
 
 ### 33. 取消关注
 
