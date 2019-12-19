@@ -3,6 +3,7 @@ create table category
 (
     category_id   serial,     -- 主键
     category_name varchar(8), -- 分类名，例如：旅游，美食，留学
+    type          varchar(8), -- 分类类型，例如：热门（hot），其他（misc）等
     create_ts     timestamp,  -- 行插入时间戳
     update_ts     timestamp,  -- 行最近一次修改时间戳
     constraint categories_pk primary key (category_id)
