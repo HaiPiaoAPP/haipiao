@@ -18,7 +18,8 @@ public class Category extends BaseEntity{
 
     @Column(name = "category_name")
     private String categoryName;
-
+    @Column(name = "type")
+    private String type;
     public int getCategoryId() {
         return categoryId;
     }
@@ -34,7 +35,13 @@ public class Category extends BaseEntity{
     public void setCategoryName(String categoryName) {
         this.categoryName = categoryName;
     }
+    public String getType() {
+        return type;
+    }
 
+    public void setType(String type) {
+        this.type = type;
+    }
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
