@@ -9,7 +9,7 @@ data:
     redis.dbIndex=0
     redis.defaultTTL=600
     postgres.driverClassName=org.postgresql.Driver
-    postgres.url=jdbc:postgresql://haipiao-postgres.testk8s.svc:48375/postgres
+    postgres.url=jdbc:postgresql://haipiao-postgres.testk8s.svc:5432/postgres
     postgres.username=postgres
     postgres.password=haipiaodev
     sts.stsEndpoint=sts.aliyuncs.com

@@ -1,4 +1,4 @@
-# HaiPiao API 文档 
+# HaiPiao API 文档
 
 ## 文档规范
 
@@ -6,8 +6,8 @@
 
 一段对API的文字描述 （正文）
 
-**URL**： `/example`  
-**Method**: GET  
+**URL**: `/example`
+**Method**: GET
 **Required headers**: `Cookie`
 
 **Parameters**:
@@ -16,16 +16,16 @@
 | ---- | ----------- | -------- | ----------------------------------- |
 | example_para | String  | Yes      | 必要的文字描述 |
 
-**Request body**:  
+**Request body**:
 必要的文字描述。（请将代码块的语法设置为`javascript`.）
 
 ```javascript
 {
-  ... 
+  ...
 }
 ```
 
-**Response body** :  
+**Response body** :
 必要的文字描述。（请将代码块的语法设置为`javascript`.）
 
 **Success**
@@ -53,7 +53,7 @@
 - `SOME_ERROR`: 必要的文字描述。
 
 
-## 登陆模块 API 
+## 登陆模块 API
 
 ### 1. 获取验证码
 
@@ -62,7 +62,7 @@
 
 蓝湖图2。
 
-**URL**： `/security-code`  
+**URL**: `/security-code`
 **Method**: GET
 
 **Parameters**:
@@ -103,18 +103,18 @@
 
 ### 2. 验证验证码并登陆/注册
 
-客户端请求服务器验证 1. 用户登陆或注册（`login`）或 2. 用户修改手机号（`update_cell`）  
+客户端请求服务器验证 1. 用户登陆或注册（`login`）或 2. 用户修改手机号（`update_cell`）
 如果验证类型为`login`（登陆或注册）：
 - 当用户（手机号）已存在，直接登陆, 服务器需返回session token(`"type"="SESSION_TOKEN"`)。
-- 当用户（手机号）不存在，服务器端需返回nonce, nonce在使用一次后即失效(`"type"="NONCE"`)。 
+- 当用户（手机号）不存在，服务器端需返回nonce, nonce在使用一次后即失效(`"type"="NONCE"`)。
 
 如果验证目的为`update_cell` (更新手机号)：
 - 服务器端需返回nonce, nonce在使用一次后即失效(`"type"="NONCE"`)
 
-**URL**： `/security-code/verification`  
+**URL**: `/security-code/verification`
 **Method**: POST
 
-**Request body**:  
+**Request body**:
 purpose可以是`login`或`update_cell`。
 
 ```javascript
@@ -126,18 +126,18 @@ purpose可以是`login`或`update_cell`。
 }
 ```
 
-**Response body** :  
+**Response body** :
 请求成功将会返回一个token，token类型和token签发的时间。
 
 **Success**
 
 ```javascript
-{ 
+{
   "status_code": "SUCCESS",
   "data": {
     "token": "euMA3jBRShPn/K935B9e0A==:T4p4tBPdDrgD70UbbgGNoQ==",
     "issued_time": 1571641196070,
-    "type": "SESSION_TOKEN" 
+    "type": "SESSION_TOKEN"
   }
 }
 ```
@@ -163,12 +163,12 @@ App请求一个拥有阿里云OSS写权限的token。然后用这个token来上�
 请参考此文档（https://help.aliyun.com/document_detail/100624.html?spm=a2c4g.11186623.6.656.1a6c44fdyhPHYR）中实现原理部分。
 需用对同一个用户进行限流。
 
-**URL**： `/image/securitytoken`  
-**Method**: GET  
+**URL**: `/image/securitytoken`
+**Method**: GET
 **Required headers**:
 - `Cookie`: 必须包含seesion_token。不支持visitor mode(游客模式)
 
-**Response body** :  
+**Response body** :
 返回调用阿里云OSS所必须的信息。
 
 **Success**
@@ -209,11 +209,11 @@ access key id, access key secret，security token和expire time, app需要缓存
 
 客户端上传用户设置的个人基本信息：名字，性别，生日，头像等，请求中需包含session token。
 
-**URL**： `/user`  
-**Method**: POST   
+**URL**: `/user`
+**Method**: POST
 **Required headers**: `Cookie`
 
-**Request body**:  
+**Request body**:
 
 `profile_image_url`为可缺省，即不上传头像。
 `name`，`gender`和`birthday`是必需的。
@@ -222,7 +222,7 @@ access key id, access key secret，security token和expire time, app需要缓存
 
 ```javascript
 {
-  "nonce": "euMA3jBRShPn/K935B9e0A==",  
+  "nonce": "euMA3jBRShPn/K935B9e0A==",
   "name": "王小明",
   "gender": "M",
   "birthday": "1992/01/31",
@@ -243,7 +243,7 @@ App需要缓存用户ID和session token。
   "data": {
     "id": 1234,
     "session_token": "euMA3jBRShPn/K935B9e0A==:T4p4tBPdDrgD70UbbgGNoQ=="
-  } 
+  }
 }
 ```
 
@@ -270,8 +270,8 @@ category列表和对应图片建议缓存。
 
 蓝湖图7和8为需要调用`/category?type=all`。
 
-**URL**: `/category?type=[hot|misc|all]`  
-**Method**: GET  
+**URL**: `/category?type=[hot|misc|all]`
+**Method**: GET
 
 **Required headers**: `Cookie: session-token=<token>`
 
@@ -321,7 +321,7 @@ category列表和对应图片建议缓存。
 - `BAD_REQUEST`: query parameter的类型不合法。
 - `INTERNAL_SERVER_ERROR`: 未知服务器错误。
 
-### 6. 设置感兴趣的主题 
+### 6. 设置感兴趣的主题
 
 客户端上传用户设置的5+ 个感兴趣主题，请求中需包含session token。
 
@@ -717,7 +717,7 @@ topic_related_latest对应蓝湖图54（点击最新）；
 - `UNAUTHORIZED`: 用户未登录或者session token不合法。
 - `INTERNAL_SERVER_ERROR`: 未知服务器错误。
 
-### 15. 获取关注用户的更新
+### 14. 获取关注用户的更新
 
 检查当前用户所关注的用户是否有更新
 
@@ -780,14 +780,14 @@ image tag中的x和y都是int，x表示的浮点数是0.001*x。
           },
           {...}
         ],
-        "topics": ["学习", "工作"]        
+        "topics": ["学习", "工作"]
         "collects": 15,
         "collected": false,
         "likes": 120,
         "liked": false,
         "shares": 28,
         "comments": {
-          "total_count": 23, 
+          "total_count": 23,
           "items": [
             {
               "commenter_name": "小红",
@@ -819,91 +819,7 @@ image tag中的x和y都是int，x表示的浮点数是0.001*x。
 - `UNAUTHORIZED`: session token不存在或不合法。
 - `INTERNAL_SERVER_ERROR`: 未知服务器错误。
 
-### 16. 加载文章
-
-包含是否本人已点赞和已收藏
-
-**URL**: `/article/{id}`
-
-**Method**: GET
-
-**Parameters**:
-
-| Name | Type        | Required | Description                         |
-| ---- | ----------- | -------- | ----------------------------------- |
-| type | String  | Yes      | "check"或者"pull" |
-
-**Required headers**: `Cookie: session-token=<token>`
-
-**Response body**:
-
-**Success**:
-
-tag中的x和y都是int，x表示的浮点数是0.001*x。
-```javascript
-{
-  "status_code": "SUCCESS",
-  "data": {
-    "article": {
-      "id": 123,
-      "title": "学习和工作",
-      "author": {
-        "id": 234,
-        "name": "小明",
-        "profile_image_url": "aliyun-abc.oss-cn-hangzhou.aliyuncs.com/user/1234.jpg"
-      },
-      "images": [
-        {
-          "url": "aliyun-abc.oss-cn-hangzhou.aliyuncs.com/image/1234.jpg",
-          "tags": [
-            {
-              "text": "",
-              "x": "1234", // 用int来表示定点小数，表示0.1234
-              "y": "345" // 用int来表示定点小数，表示0.0345
-            },
-            {...}
-          ]
-        },
-        {...}
-      ],
-      "topics": ["学习", "工作"]      
-      "collects": 15,
-      "collected": false,
-      "likes": 120,
-      "liked": false,
-      "shares": 28,
-      "comments": {
-        "total_count": 23, 
-        "items": [
-          {
-            "commenter_name": "小红",
-            "commenter_id": 46, // user id
-            "comment": "好赞呀！"
-          },
-          {...}
-        ]
-      }
-      }
-  }
-}
-```
-
-**Fail**
-
-```javascript
-{
-  "status_code": <String>,
-  "error_message": <String>
-}
-```
-
-**Possible error codes**:
-
-- `BAD_REQUEST`: query parameter不存在或不合法。
-- `UNAUTHORIZED`: session token不存在或不合法。
-- `INTERNAL_SERVER_ERROR`: 未知服务器错误。
-
-### 17.  获取用户分组
+### 15.  获取用户分组
 
 获取当前用户所创建的所有“分组”。
 蓝湖图13。
@@ -950,7 +866,7 @@ tag中的x和y都是int，x表示的浮点数是0.001*x。
 - `UNAUTHORIZED`: session token不存在或不合法。
 - `INTERNAL_SERVER_ERROR`: 未知服务器错误。
 
-### 18. 获取默认分组
+### 16. 获取默认分组
 
 获取系统的默认分组。
 蓝湖图13。
@@ -997,7 +913,7 @@ tag中的x和y都是int，x表示的浮点数是0.001*x。
 - `UNAUTHORIZED`: session token不存在或不合法。
 - `INTERNAL_SERVER_ERROR`: 未知服务器错误。
 
-### 19. 删除分组
+### 17. 删除分组
 
 需要检查分组是否属于该用户。
 
@@ -1029,7 +945,7 @@ tag中的x和y都是int，x表示的浮点数是0.001*x。
 - `UNAUTHORIZED`: 用户未登录或者session token不合法。
 - `INTERNAL_SERVER_ERROR`: 未知服务器错误。
 
-### 20. 新建分组
+### 18. 新建分组
 
 为某用户新建关注分组。
 蓝湖图14。
@@ -1074,16 +990,398 @@ tag中的x和y都是int，x表示的浮点数是0.001*x。
 - `UNAUTHORIZED`: 用户未登录或者session token不合法。
 - `INTERNAL_SERVER_ERROR`: 未知服务器错误。
 
-## TODO: complete APIs below
-
 ## 用户模块API
+
+### 19. 获取用户笔记
+
+获取用户笔记列表
+
+**URL**: `/user/{id}/article`
+
+**Method**: GET
+
+**Required headers**: `Cookie`
+
+**Response body** :
+
+**Success**
+
+```javascript
+{
+  "status_code": "SUCCESS",
+  "data": {
+    "articles": [
+      {
+        "cover_image_url": "aliyun-abc.oss-cn-hangzhou.aliyuncs.com/cover/1234.jpg",
+        "id": 1234,
+        "title": "旧金山旅游",
+        "author": {
+          "id": 123,
+          "name": "小明",
+          "profile_image_url": "aliyun-abc.oss-cn-hangzhou.aliyuncs.com/user/123.jpg"
+        }
+        "likes": 45,
+        "liked": false
+      },
+      {...}
+    ]
+    "total_count": 10,
+    "cursor": "6",
+    "more_to_follow": true
+  }
+}
+```
+
+**Fail**
+
+```javascript
+{
+  "status_code": <String>,
+  "error_message": <String>
+}
+```
+
+**Possible error codes**:
+
+- `BAD_REQUEST`: user_id不存在。
+- `UNAUTHORIZED`: 用户未登录或者session token不合法。
+- `INTERNAL_SERVER_ERROR`: 未知服务器错误。
+
+### 20. 获取用户收藏的笔记
+
+获取用户收藏的笔记列表
+
+**URL**: `/user/{id}/collection`
+
+**Method**: GET
+
+**Required headers**: `Cookie`
+
+| Name | Type        | Required | Description                         |
+| ---- | ----------- | -------- | ----------------------------------- |
+| limit | Integer  | No      | 请求的列表长度(默认为6) |
+| cursor | string | false | 当前一次响应`more_to_follow`为`true`时，如果想要继续请求列表中的后续内容，需要带上前一次返回的cursor。 |
+
+**Response body** :
+
+**Success**
+
+```javascript
+{
+  "status_code": "SUCCESS",
+  "data": {
+    "articles": [
+      {
+        "cover_image_url": "aliyun-abc.oss-cn-hangzhou.aliyuncs.com/cover/1234.jpg",
+        "id": 1234,
+        "title": "旧金山旅游",
+        "author": {
+          "id": 123,
+          "name": "小明",
+          "profile_image_url": "aliyun-abc.oss-cn-hangzhou.aliyuncs.com/user/123.jpg"
+        }
+        "likes": 45,
+        "liked": false
+      },
+      {...}
+    ]
+    "total_count": 10,
+    "cursor": "6",
+    "more_to_follow": true
+  }
+}
+```
+
+**Fail**
+
+```javascript
+{
+  "status_code": <String>,
+  "error_message": <String>
+}
+```
+
+**Possible error codes**:
+
+- `BAD_REQUEST`: user_id不存在。
+- `UNAUTHORIZED`: 用户未登录或者session token不合法。
+- `INTERNAL_SERVER_ERROR`: 未知服务器错误。
+
+### 21. 获取用户收藏的专辑
+
+获取用户收藏的专辑列表
+
+**URL**: `/user/{id}/album`
+
+**Method**: GET
+
+**Required headers**: `Cookie`
+
+| Name | Type        | Required | Description                         |
+| ---- | ----------- | -------- | ----------------------------------- |
+| limit | Integer  | No      | 请求的列表长度(默认为6) |
+| cursor | string | false | 当前一次响应`more_to_follow`为`true`时，如果想要继续请求列表中的后续内容，需要带上前一次返回的cursor。 |
+
+**Response body** :
+
+**Success**
+
+```javascript
+{
+  "status_code": "SUCCESS",
+  "data": {
+    "articles": [
+      {
+        "id": 1234,
+        "title": 旧金山旅游攻略,
+        "cover_image_urls": [aliyun-abc.oss-cn-hangzhou.aliyuncs.com/cover/1234.jpg, aliyun-abc.oss-cn-hangzhou.aliyuncs.com/cover/1234.jpg],
+        "articles_count": 2,
+        "followers_count": 10
+      },
+      {...}
+    ]
+    "total_count": 10,
+    "cursor": "6",
+    "more_to_follow": true
+  }
+}
+```
+
+**Fail**
+
+```javascript
+{
+  "status_code": <String>,
+  "error_message": <String>
+}
+```
+
+**Possible error codes**:
+
+- `BAD_REQUEST`: user_id不存在。
+- `UNAUTHORIZED`: 用户未登录或者session token不合法。
+- `INTERNAL_SERVER_ERROR`: 未知服务器错误。
+
+### 22. 获取用户粉丝
+
+获取用户粉丝列表
+
+**URL**: `/user/{id}/follower`
+
+**Method**: GET
+
+**Required headers**: `Cookie`
+
+| Name | Type        | Required | Description                         |
+| ---- | ----------- | -------- | ----------------------------------- |
+| limit | Integer  | No      | 请求的列表长度(默认为6) |
+| cursor | string | false | 当前一次响应`more_to_follow`为`true`时，如果想要继续请求列表中的后续内容，需要带上前一次返回的cursor。 |
+
+**Response body** :
+
+**Success**
+
+```javascript
+{
+  "status_code": "SUCCESS",
+  "data": {
+    "followers": [
+      {
+        "id": 123,
+        "name": "小红",
+        "profile_image_urls": "aliyun-abc.oss-cn-hangzhou.aliyuncs.com/user/1234.jpg",
+        "followers_count": 20,
+        "followered": true
+      },
+      {...}
+    ]
+    "total_count": 10,
+    "cursor": "6",
+    "more_to_follow": true
+  }
+}
+```
+
+**Fail**
+
+```javascript
+{
+  "status_code": <String>,
+  "error_message": <String>
+}
+```
+
+**Possible error codes**:
+
+- `BAD_REQUEST`: user_id不存在。
+- `UNAUTHORIZED`: 用户未登录或者session token不合法。
+- `INTERNAL_SERVER_ERROR`: 未知服务器错误。
+
+
+## 文章模块API
+
+### 23. 加载文章
+
+包含是否本人已点赞和已收藏
+
+**URL**: `/article/{id}`
+
+**Method**: GET
+
+**Parameters**:
+
+| Name | Type        | Required | Description                         |
+| ---- | ----------- | -------- | ----------------------------------- |
+| type | String  | Yes      | "check"或者"pull" |
+
+**Required headers**: `Cookie: session-token=<token>`
+
+**Response body**:
+
+**Success**:
+
+tag中的x和y都是int，x表示的浮点数是0.001*x。
+```javascript
+{
+  "status_code": "SUCCESS",
+  "data": {
+    "article": {
+      "id": 123,
+      "title": "学习和工作",
+      "author": {
+        "id": 234,
+        "name": "小明",
+        "profile_image_url": "aliyun-abc.oss-cn-hangzhou.aliyuncs.com/user/1234.jpg"
+      },
+      "images": [
+        {
+          "url": "aliyun-abc.oss-cn-hangzhou.aliyuncs.com/image/1234.jpg",
+          "tags": [
+            {
+              "text": "",
+              "x": "1234", // 用int来表示定点小数，表示0.1234
+              "y": "345" // 用int来表示定点小数，表示0.0345
+            },
+            {...}
+          ]
+        },
+        {...}
+      ],
+      "topics": ["学习", "工作"]
+      "collects": 15,
+      "collected": false,
+      "likes": 120,
+      "liked": false,
+      "shares": 28,
+      "comments": {
+        "total_count": 23,
+        "items": [
+          {
+            "commenter_name": "小红",
+            "commenter_id": 46, // user id
+            "comment": "好赞呀！"
+          },
+          {...}
+        ]
+      }
+    }
+  }
+}
+```
+
+**Fail**
+
+```javascript
+{
+  "status_code": <String>,
+  "error_message": <String>
+}
+```
+
+**Possible error codes**:
+
+- `BAD_REQUEST`: query parameter不存在或不合法。
+- `UNAUTHORIZED`: session token不存在或不合法。
+- `INTERNAL_SERVER_ERROR`: 未知服务器错误。
+
+### 24. 加载评论列表
+
+**URL**: `/article/{id}/comment`
+
+**Method**: GET
+
+**Parameters**:
+
+| Name | Type        | Required | Description                         |
+| ---- | ----------- | -------- | ----------------------------------- |
+| limit | Integer  | No      | 请求的列表长度(默认为6) |
+| cursor | string | false | 当前一次响应`more_to_follow`为`true`时，如果想要继续请求列表中的后续内容，需要带上前一次返回的cursor。 |
+
+**Required headers**: `Cookie: session-token=<token>`
+
+**Response body**:
+
+**Success**:
+
+```javascript
+{
+  "status_code": "SUCCESS",
+  "data": {
+    "comments":[
+      {
+        "id": 3465,
+        "content": "阿布扎比的多元文化",
+        "commented_time": <long>,
+        "likes": 32,
+        "commenter": {
+          "id": 123,
+          "profile_image_url": <string>,
+          "name": <string>
+        },
+        "replies_count": <integer>,
+        "replies": [
+          {
+            "replier": {
+              "id": <integer>,
+              "name": <string>
+            }
+            "content": <string>
+          },
+          {...}
+        ]
+      },
+    ]
+    "total_count": <integer>,
+    "cursor": <string>,
+    "more_to_follow": <boolean>
+  }
+}
+```
+
+**Fail**
+
+```javascript
+{
+  "status_code": <String>,
+  "error_message": <String>
+}
+```
+
+**Possible error codes**:
+
+- `BAD_REQUEST`: query parameter不存在或不合法。
+- `UNAUTHORIZED`: session token不存在或不合法。
+- `INTERNAL_SERVER_ERROR`: 未知服务器错误。
+
+
+## TODO: complete APIs below
 
 
 ## 搜索系统API
 
 搜索系统需要搭建elastic search或Solr。
 
-### XX. 搜索文章 
+### XX. 搜索文章
 
 ### XX. 搜索话题
 
@@ -1093,8 +1391,9 @@ tag中的x和y都是int，x表示的浮点数是0.001*x。
 
 ### XX. 自动补全 （17）
 
-
 ## 通知系统API
+
+## IM模块API
 
 ### 16. 通知是否有更新
 
@@ -1123,10 +1422,10 @@ pull： 获取所有更新信息
 
 一段对API的文字描述 （正文）
 
-**URL**： `/user/{user_id}/album?limit=<integer>&cursor=<string>`
+**URL**: `/user/{user_id}/album?limit=<integer>&cursor=<string>`
 TODO: decide how to handle user itself
 
-**Method**: GET  
+**Method**: GET
 
 **Required headers**: `Cookie`
 
@@ -1137,7 +1436,7 @@ TODO: decide how to handle user itself
 | limit | Integer  | No      | 请求的列表长度(默认为6) |
 | cursor | string | false | 当前一次响应`more_to_follow`为`true`时，如果想要继续请求列表中的后续内容，需要带上前一次返回的cursor。 |
 
-**Response body** :  
+**Response body** :
 
 返回一个专辑列表。如果请求的limit比较大，服务器会返回`more_to_follow: true`以及一个cursor同时还有一个不完整的列表（个数<limit）。
 
@@ -1154,7 +1453,7 @@ TODO: decide how to handle user itself
          "cover_image_urls": ["aliyun-abc.oss-cn-hangzhou.aliyuncs.com/cover/1234.jpg"],
          "articles_count": 1,
          "followers_count": 15,
-         "followered": false           
+         "followered": false
       }
     ],
     "cursor": "thisisacursor",
@@ -1187,7 +1486,7 @@ TODO: decide how to handle user itself
 
 评论者昵称，评论时间，前2条回复，点赞数，是否已为评论点赞，回复总数
 
-### 39. 加载一条评论和回复 
+### 39. 加载一条评论和回复
 
 回复内容，回复者昵称，回复时间，回复的点赞数，被回复的人
 
