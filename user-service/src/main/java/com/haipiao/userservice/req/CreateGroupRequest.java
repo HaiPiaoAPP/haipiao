@@ -13,6 +13,9 @@ public class CreateGroupRequest extends AbstractRequest {
     @SerializedName("group_name")
     private String groupName;
 
+    public CreateGroupRequest() {
+    }
+
     public CreateGroupRequest(Integer userId, String groupName) {
         this.userId = userId;
         this.groupName = groupName;

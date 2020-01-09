@@ -34,8 +34,11 @@ public class GetUserFollowerHandler extends AbstractHandler<GetUserFollowerReque
     @Autowired
     private UserFollowingRelationRepository userFollowingRelationRepository;
 
-    protected GetUserFollowerHandler(SessionService sessionService, UserFollowingRelationRepository userFollowingRelationRepository) {
+    protected GetUserFollowerHandler(SessionService sessionService,
+                                     UserRepository userRepository,
+                                     UserFollowingRelationRepository userFollowingRelationRepository) {
         super(GetUserFollowerResponse.class, sessionService);
+        this.userRepository = userRepository;
         this.userFollowingRelationRepository = userFollowingRelationRepository;
     }
 

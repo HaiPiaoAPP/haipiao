@@ -13,6 +13,9 @@ public class GetUserGroupRequest extends AbstractRequest {
     @SerializedName("type")
     private String type;
 
+    public GetUserGroupRequest() {
+    }
+
     public GetUserGroupRequest(Integer id, String type) {
         this.id = id;
         this.type = type;
