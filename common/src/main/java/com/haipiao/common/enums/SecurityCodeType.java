@@ -4,7 +4,7 @@ import java.util.Arrays;
 
 public enum SecurityCodeType {
 
-    REGISTRATION("registration"), CHANGE_PASSWORD("password"), LOGIN("login");
+    LOGIN("login"), CHANGE_PASSWORD("password");
 
     SecurityCodeType(String code) {
         this.code = code;

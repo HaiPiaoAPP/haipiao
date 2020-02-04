@@ -8,11 +8,18 @@ public class VerifySCRequest extends AbstractRequest {
     @SerializedName("code")
     private String securityCode;
 
+    @SerializedName("country_code")
+    private String countryCode;
+
     @SerializedName("cell")
     private String cell;
 
     @SerializedName("type")
     private String type;
+
+    public String getCountryCode() {
+        return countryCode;
+    }
 
     public String getSecurityCode() {
         return securityCode;
@@ -30,6 +37,7 @@ public class VerifySCRequest extends AbstractRequest {
     public String toString() {
         return "VerifySCRequest{" +
             "securityCode='" + securityCode + '\'' +
+            ", countryCode='" + countryCode + '\'' +
             ", cell='" + cell + '\'' +
             ", type='" + type + '\'' +
             '}';

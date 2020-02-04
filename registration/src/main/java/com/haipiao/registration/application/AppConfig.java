@@ -22,7 +22,6 @@ public class AppConfig {
                                                    RedisClientWrapper redisClient) {
         return new SecurityCodeManager(gson, redisClient,
             ImmutableMap.of(
-                SecurityCodeType.REGISTRATION, new SecurityCodeConfig(6, 6 * 60, 5 * 1000),
                 SecurityCodeType.CHANGE_PASSWORD, new SecurityCodeConfig(6, 6 * 60, 5 * 1000),
                 SecurityCodeType.LOGIN, new SecurityCodeConfig(6, 6 * 60, 5 * 1000)
             ));

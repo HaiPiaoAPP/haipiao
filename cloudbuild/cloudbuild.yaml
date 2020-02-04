@@ -8,8 +8,8 @@ steps:
     args: ['clone', '--depth=1', 'https://github.com/HaiPiaoAPP/haipiao.git']
     id: git-clone
     waitFor: ['-']
-  - name: 'gcr.io/cloud-builders/gradle'
-    args: ['assemble']
+  - name: 'gradle:jdk11'
+    args: ['gradle', 'assemble']
     id: gradle
     waitFor: ['git-clone']
 
@@ -39,6 +39,15 @@ steps:
     args: ['push', 'haipiaodev/article-service:${_ARTICLE_SERVICE_VERSION}']
     id: docker-push-article-service
     waitFor: ['docker-build-article-service']
+
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['build', '-t=haipiaodev/image-service:${_IMAGE_SERVICE_VERSION}', 'image-service']
+    id: docker-build-image-service
+    waitFor: ['gradle']
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', 'haipiaodev/image-service:${_IMAGE_SERVICE_VERSION}']
+    id: docker-push-image-service
+    waitFor: ['docker-build-image-service']
 
   - name: 'gcr.io/cloud-builders/kubectl'
     args: ['apply', '-f=deployment/k8s/app/namespace.yaml']
@@ -83,3 +92,4 @@ substitutions:
   _ARTICLE_SERVICE_VERSION: 0.0.1
   _REGISTRATION_VERSION: 0.0.1
   _USER_SERVICE_VERSION: 0.0.1
+  _IMAGE_SERVICE_VERSION: 0.0.1

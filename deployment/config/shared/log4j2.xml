@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration>
+    <Appenders>
+        <Console name="Console" target="SYSTEM_OUT" follow="true" >
+            <PatternLayout pattern="%d loglvl=%-5p rId=%X{REQUEST_UUID} ip=%X{IP} appname=%X{APP_NAME} actionKpi=%X{ACTION_KPI} [%t] %c - %m%n" />
+        </Console>
+    </Appenders>
+
+    <Loggers>
+        <!-- LOG everything at INFO level -->
+        <Root level="info">
+            <AppenderRef ref="Console" />
+        </Root>
+    </Loggers>
+</Configuration>

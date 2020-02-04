@@ -8,8 +8,6 @@ public interface SessionService {
 
     UserSessionInfo validateSession(String sessionToken) throws AppException;
 
-    SessionToken createTemporarySession() throws AppException;
-
     SessionToken createUserSession(String phone) throws AppException;
 
     SessionToken createUserSession(int id) throws AppException;

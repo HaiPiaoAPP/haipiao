@@ -78,26 +78,24 @@ public class SessionServiceImpl implements SessionService {
     }
 
     @Override
-    public SessionToken createTemporarySession() throws AppException {
-        SessionToken sessionToken = SessionUtils.generateSessionToken();
-        try {
-            redisClient.set(sessionToken.toString(), "{}"); // create
-            LOGGER.debug("Created temporary session. sessionToken={}", sessionToken.toString());
-        } catch (Exception ex) {
-            throw new AppException(StatusCode.INTERNAL_SERVER_ERROR, ex);
-        }
-        return sessionToken;
-    }
-
-    @Override
     public SessionToken createUserSession(String phone) throws AppException {
         SessionToken sessionToken = SessionUtils.generateSessionToken();
-        // 1. find user id by user's phone number
+        // find user id by user's phone number
         User loggedInUser = userRepository.getUserByPhone(phone);
-        // TODO:add more fields 2. create user session in Redis
+        // If can't find the user, create a temporary session token.
+        if (loggedInUser == null) {
+            try {
+                redisClient.set(sessionToken.toString(), "{}"); // create
+                LOGGER.debug("Created temporary session. sessionToken={}", sessionToken.toString());
+            } catch (Exception ex) {
+                throw new AppException(StatusCode.INTERNAL_SERVER_ERROR, ex);
+            }
+            return sessionToken;
+        }
+        // If we can find the user by phone number, create a session token and persist it to DB/Redis
         UserSessionInfo sessionInfo = new UserSessionInfo();
         sessionInfo.setUserId(loggedInUser.getUserId());
-        // 3. persist user session in Database/Redis
+        // persist user session in Database/Redis
         try {
             redisClient.set(sessionToken.toString(), gson.toJson(sessionInfo));
             UserSession userSession = new UserSession();

@@ -21,7 +21,7 @@ public class ImageController extends HealthzController {
     private SecurityTokenHandler securityTokenHandler;
 
     @GetMapping("/image/securitytoken")
-    public ResponseEntity<GetSecurityTokenResponse> getSecurityToken(@CookieValue("session-token") String sessionToken) {
+    public ResponseEntity<GetSecurityTokenResponse> getSecurityToken(@CookieValue("session-token") String sessionToken)  {
         Preconditions.checkArgument(StringUtils.isNotEmpty(sessionToken));
         GetSecurityTokenRequest req = new GetSecurityTokenRequest();
         return securityTokenHandler.handle(sessionToken, req);

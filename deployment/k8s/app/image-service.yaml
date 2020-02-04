@@ -25,6 +25,10 @@ spec:
       app: imagesvc
   template:
     metadata:
+      annotations:
+        prometheus.io/scrape: 'true'
+        prometheus.io/path: '/actuator/prometheus'
+        prometheus.io/port: '8080'
       labels:
         app: imagesvc
     spec:
@@ -39,7 +43,7 @@ spec:
             httpGet:
               path: /healthz
               port: 8080
-            initialDelaySeconds: 90
+            initialDelaySeconds: 120
             periodSeconds: 3
           volumeMounts:
             - name: properties-volume

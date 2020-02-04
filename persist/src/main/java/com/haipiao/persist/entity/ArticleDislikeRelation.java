@@ -1,8 +1,11 @@
 package com.haipiao.persist.entity;
 
-import lombok.ToString;
-
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import java.util.Objects;
 
 /**
@@ -10,7 +13,6 @@ import java.util.Objects;
  */
 @Entity
 @Table(name = "article_dislike_relation")
-@ToString
 public class ArticleDislikeRelation extends BaseEntity{
 
     @Id

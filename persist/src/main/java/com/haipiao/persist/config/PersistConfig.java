@@ -29,7 +29,6 @@ public class PersistConfig {
 
     @Bean
     public DataSource dataSource() {
-        System.out.println("######## persistProperties " + persistProperties.toString() + "########");
         DriverManagerDataSource dataSource = new DriverManagerDataSource();
         dataSource.setDriverClassName(persistProperties.getPostgres().getDriverClassName());
         dataSource.setUrl(persistProperties.getPostgres().getUrl());

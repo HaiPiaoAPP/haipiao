@@ -12,7 +12,7 @@ import org.springframework.context.annotation.Import;
 
 @Configuration
 @Import(PersistConfig.class)
-@ComponentScan(basePackages = {"com.haipiao.common.service"})
+@ComponentScan(basePackages = {"com.haipiao.common.service", "com.haipiao.common.interceptor"})
 public class CommonConfig {
 
     @Value("${redis.service:localhost:16379}")

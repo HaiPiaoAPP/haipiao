@@ -37,11 +37,6 @@ public class VerifySCHandler extends AbstractHandler<VerifySCRequest, VerifySCRe
         VerifySCResponse resp = new VerifySCResponse(SUCCESS);
         SessionToken sessionToken;
         switch (type) {
-            case REGISTRATION:
-                // TODO: to be implemented
-                sessionToken = sessionService.createTemporarySession();
-                resp.setData(new VerifySCResponse.Session(sessionToken.toString(), System.currentTimeMillis()));
-                break;
             case LOGIN:
                 sessionToken = sessionService.createUserSession(request.getCell());
                 resp.setData(new VerifySCResponse.Session(sessionToken.toString(), System.currentTimeMillis()));
