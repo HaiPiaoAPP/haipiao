@@ -11,6 +11,7 @@ import com.haipiao.registration.resp.VerifySCResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import static com.haipiao.common.enums.StatusCode.BAD_REQUEST;
 import static com.haipiao.common.enums.StatusCode.FORBIDDEN;
 import static com.haipiao.common.enums.StatusCode.SUCCESS;
 
@@ -29,6 +30,9 @@ public class VerifySCHandler extends AbstractHandler<VerifySCRequest, VerifySCRe
     @Override
     public VerifySCResponse execute(VerifySCRequest request) throws AppException {
         SecurityCodeType type = SecurityCodeType.findByCode(request.getType());
+        if (type == null) {
+            return new VerifySCResponse(BAD_REQUEST);
+        }
         boolean validated = securityCodeManager.validateSecurityCode(request.getCell(), request.getSecurityCode(), type);
         if (!validated) {
             return new VerifySCResponse(FORBIDDEN);

@@ -17,7 +17,7 @@ data:
     sts.accessKeyId=LTAI4FvaHAkhBwxKrjJ5W83N
     sts.accessKeySecret=kj46BvWo07uxlkirvzFrtJE81gwPva
     sts.roleArn=acs:ram::1893264966337206:role/haipiao-image-uploader
-    sms.testing=false
+    sms.testing=true
     sms.domain=dysmsapi.aliyuncs.com
     sms.region=cn-hangzhou
     sms.accessKeyId=LTAI4FqraELkYj7NisESNPGA

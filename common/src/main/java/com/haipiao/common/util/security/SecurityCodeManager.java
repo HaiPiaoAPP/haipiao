@@ -31,6 +31,7 @@ public class SecurityCodeManager {
 
     @Nullable
     public String getSecurityCode(String cell, SecurityCodeType securityCodeType) {
+        Preconditions.checkNotNull(securityCodeType);
         SecurityCodeConfig config = Preconditions.checkNotNull(configMap.get(securityCodeType));
         String code = RandomStringUtils.randomNumeric(config.getLength());
         String cacheKey = constructCacheKey(cell, securityCodeType);

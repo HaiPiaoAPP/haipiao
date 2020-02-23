@@ -20,7 +20,10 @@ import com.aliyuncs.exceptions.ClientException;
 import com.aliyuncs.exceptions.ServerException;
 import com.aliyuncs.http.MethodType;
 import com.aliyuncs.profile.DefaultProfile;
-import static com.haipiao.common.enums.StatusCode.*;
+import static com.haipiao.common.enums.StatusCode.BAD_REQUEST;
+import static com.haipiao.common.enums.StatusCode.SUCCESS;
+import static com.haipiao.common.enums.StatusCode.THROTTLED;
+import static com.haipiao.common.enums.StatusCode.INTERNAL_SERVER_ERROR;
 
 @Component
 public class VendSCHandler extends AbstractHandler<VendSCRequest, VendSCResponse> {
@@ -41,6 +44,10 @@ public class VendSCHandler extends AbstractHandler<VendSCRequest, VendSCResponse
 
     @Override
     public VendSCResponse execute(VendSCRequest request) {
+        SecurityCodeType sct = SecurityCodeType.findByCode(request.getType());
+        if (sct == null) {
+            return new VendSCResponse(BAD_REQUEST);
+        }
         final String sc = securityCodeManager.getSecurityCode(request.getCell(),
             SecurityCodeType.findByCode(request.getType()));
         if (sc == null) {
