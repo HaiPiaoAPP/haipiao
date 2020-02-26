@@ -70,7 +70,7 @@ create table user_group
 (
     group_id  serial,     -- 主键
     owner_id  integer,    -- 分组创建者的id
-    name      integer,    -- 分组名
+    name      varchar(50),    -- 分组名
     type      varchar(8), -- 分类类型，例如：热门（hot），其他（misc）, 默认（default）等
     create_ts timestamp,
     update_ts timestamp,

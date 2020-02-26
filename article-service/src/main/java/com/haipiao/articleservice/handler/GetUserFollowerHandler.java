@@ -51,7 +51,7 @@ public class GetUserFollowerHandler extends AbstractHandler<GetArticleCommentsRe
     public FollowerResponse execute(GetArticleCommentsRequest request) throws AppException {
         FollowerResponse resp = new FollowerResponse(StatusCode.SUCCESS);
         Integer userId = request.getId();
-        Pageable pageable = PageRequest.of(Integer.valueOf(request.getCursor()), request.getLimit());
+        Pageable pageable = PageRequest.of(Integer.parseInt(request.getCursor()), request.getLimit());
         Page<User> userPage = userRepository.findFollowersByUserIdForPage(userId, pageable);
         List<User> users = userPage.getContent();
         if (CollectionUtils.isEmpty(users)) {
@@ -67,7 +67,7 @@ public class GetUserFollowerHandler extends AbstractHandler<GetArticleCommentsRe
                 .collect(Collectors.toList());
 
         resp.setData(new FollowerResponse.Data(followerList, (int) userPage.getTotalElements(),
-                request.getCursor()+users.size(), userPage.getTotalPages() > Integer.valueOf(request.getCursor())));
+                request.getCursor()+users.size(), userPage.getTotalPages() > Integer.parseInt(request.getCursor())));
         return resp;
     }
 }

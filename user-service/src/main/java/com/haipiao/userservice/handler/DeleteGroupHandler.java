@@ -75,10 +75,9 @@ public class DeleteGroupHandler extends AbstractHandler<DeleteGroupRequest, Oper
             resp.setErrorMessage(String.format("%s 不属于 %s 用户",groupId, userId));
             return resp;
         }
-        userFollowingRelationRepository.updateGroupIdByGroupIdAndUserId(userId,groupId,0);
-        userRepository.deleteById(groupId);
-        OperateResponse resp = new OperateResponse(SUCCESS);
-        return resp;
+        userFollowingRelationRepository.updateGroupIdByGroupIdAndUserId(groupId,userId,0);
+        userRepository.deleteById(userId);
+        return new OperateResponse(SUCCESS);
     }
 
     private boolean checkUser(int userId){
@@ -90,7 +89,7 @@ public class DeleteGroupHandler extends AbstractHandler<DeleteGroupRequest, Oper
     }
 
     private boolean checkUserGroup(int userId,int groupId){
-        int count = userGroupRepository.countByGroupIdAndOwnerId(userId,groupId);
+        int count = userGroupRepository.countByGroupIdAndOwnerId(groupId,userId);
         if(count == 1) {
             return true;
         }

@@ -1,7 +1,5 @@
 package com.haipiao.persist.entity;
 
-import com.haipiao.persist.enums.ArticleStatus;
-
 import javax.persistence.*;
 import java.util.Objects;
 
@@ -32,7 +30,7 @@ public class Article extends BaseEntity {
     private int authorId;
 
     @Column(name = "status")
-    private ArticleStatus status;
+    private int status;
 
     public int getArticleId() {
         return articleId;
@@ -94,11 +92,11 @@ public class Article extends BaseEntity {
         this.authorId = authorId;
     }
 
-    public ArticleStatus getStatus() {
+    public int getStatus() {
         return status;
     }
 
-    public void setStatus(ArticleStatus status) {
+    public void setStatus(int status) {
         this.status = status;
     }
 

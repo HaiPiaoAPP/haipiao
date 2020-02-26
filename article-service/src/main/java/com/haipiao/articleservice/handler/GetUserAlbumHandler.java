@@ -54,12 +54,18 @@ public class GetUserAlbumHandler extends AbstractHandler<GetArticleCommentsReque
         this.userAlbumRelationRepository = userAlbumRelationRepository;
     }
 
+    /**
+     * 获取用户收藏的专辑
+     * @param request
+     * @return
+     * @throws AppException
+     */
     @Override
     public AlbumResponse execute(GetArticleCommentsRequest request) throws AppException {
         AlbumResponse resp = new AlbumResponse(StatusCode.SUCCESS);
         Integer userId = request.getId();
-        Pageable pageable = PageRequest.of(Integer.valueOf(request.getCursor()), request.getLimit());
-        Page<Album> albumPage = albumRepository.findArticlesByfollowerIdForPage(userId, pageable);
+        Pageable pageable = PageRequest.of(Integer.parseInt(request.getCursor()), request.getLimit());
+        Page<Album> albumPage = albumRepository.findArticlesByFollowerIdForPage(userId, pageable);
         List<Album> albums = albumPage.getContent();
         if (CollectionUtils.isEmpty(albums)) {
             resp.setErrorMessage(String.format("user %s not have albums", userId));

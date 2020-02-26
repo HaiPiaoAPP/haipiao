@@ -63,10 +63,10 @@ public class DeleteAndLikeArticleHandler extends AbstractHandler<LikeArticleRequ
             // TODO queue选型确定，使用队列批量处理，此逻辑为点赞队列消费逻辑
             int followerCount = userFollowingRelationRepository.countByUserId(userId);
             ArticleLikeRelation relation = articleLikeRelationRepository.save(new ArticleLikeRelation(userId, articleId, followerCount));
-            LOG.info("Save user:{} Likes Article:{} successfully", relation.getLikeId(), relation.getArticleId());
+            LOG.info("Save user:{} Likes Article:{} successfully", relation.getUserId(), relation.getArticleId());
         } else {
             // TODO queue选型确定，使用队列批量处理，此逻辑为取消点赞队列消费逻辑
-            articleLikeRelationRepository.deleteByArticleIdAndLikeId(articleId, userId);
+            articleLikeRelationRepository.deleteByArticleIdAndUserId(articleId, userId);
             LOG.info("User:{} cancels likes for Article:{}", userId, articleId);
         }
         return new LikeArticleResponse(StatusCode.SUCCESS);

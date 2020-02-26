@@ -1,6 +1,7 @@
 package com.haipiao.persist.entity;
 
 import javax.persistence.*;
+import java.util.Date;
 import java.util.Objects;
 
 @Entity
@@ -17,6 +18,35 @@ public class UserAlbumRelation extends BaseEntity {
 
     @Column(name = "album_id")
     private int albumId;
+
+    @Column(name = "create_ts")
+    private Date createTs;
+
+    @Column(name = "update_ts")
+    private Date updateTs;
+
+    @Override
+    public Date getCreateTs() {
+        return createTs;
+    }
+
+    @Override
+    public void setCreateTs(Date createTs) {
+        this.createTs = createTs;
+    }
+
+    @Override
+    public Date getUpdateTs() {
+        return updateTs;
+    }
+
+    @Override
+    public void setUpdateTs(Date updateTs) {
+        this.updateTs = updateTs;
+    }
+
+    public UserAlbumRelation() {
+    }
 
     public UserAlbumRelation(int followerId, int albumId) {
         this.followerId = followerId;

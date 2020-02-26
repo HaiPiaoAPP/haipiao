@@ -45,7 +45,7 @@ public class GetCategoryHandler extends AbstractHandler<GetCategoryRequest, GetC
      */
     @Override
     protected GetCategoryResponse execute(GetCategoryRequest request) throws AppException {
-        if (GetCategoryEnum.checkType(request.getType())){
+        if (!GetCategoryEnum.checkType(request.getType())){
             GetCategoryResponse response = new GetCategoryResponse(StatusCode.BAD_REQUEST);
             response.setErrorMessage(String.format("%s: 无此分类Type", request.getType()));
             return response;

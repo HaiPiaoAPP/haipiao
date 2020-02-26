@@ -6,6 +6,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
@@ -23,10 +24,10 @@ public interface UserRepository extends CrudRepository<User, Integer> {
 
     @Query(value = "select u.* " +
             "from user_following_relation ufr " +
-            "join user u on ufr.following_user_id = u.user_id " +
-            "where ufr.user_id = ?1 " +
+            "left join hp_user u on ufr.following_user_id = u.user_id " +
+            "where ufr.user_id = :userId " +
             "order by ufr.create_ts desc",nativeQuery = true)
-    Page<User> findFollowersByUserIdForPage(Integer userId, Pageable pageable);
+    Page<User> findFollowersByUserIdForPage(@Param("userId") Integer userId, Pageable pageable);
 
 
 }

@@ -6,8 +6,9 @@ import com.haipiao.common.handler.AbstractHandler;
 import com.haipiao.common.service.SessionService;
 import com.haipiao.persist.entity.User;
 import com.haipiao.persist.repository.*;
+import com.haipiao.userservice.enums.RecommendationContextEnum;
 import com.haipiao.userservice.handler.constants.LimitNumConstant;
-import com.haipiao.userservice.handler.factory.ChooseRecommended;
+import com.haipiao.userservice.handler.factory.*;
 import com.haipiao.userservice.req.RecommendationRequest;
 import com.haipiao.userservice.resp.RecommendationResponse;
 import com.haipiao.userservice.resp.dto.RecommendationInfoDto;
@@ -16,10 +17,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -34,19 +32,29 @@ public class RecommendationHandler extends AbstractHandler<RecommendationRequest
     private UserRepository userRepository;
 
     @Autowired
-    private ChooseRecommended chooseRecommended;
+    private UserFollowingRelationRepository userFollowingRelationRepository;
 
     @Autowired
-    private UserFollowingRelationRepository userFollowingRelationRepository;
+    private ArticleRecommended articleRecommended;
+
+    @Autowired
+    private DefaultRecommended defaultRecommended;
+
+    @Autowired
+    private UserProfileRecommended userProfileRecommended;
 
     protected RecommendationHandler(SessionService sessionService,
                                     UserRepository userRepository,
-                                    ChooseRecommended chooseRecommended,
-                                    UserFollowingRelationRepository userFollowingRelationRepository) {
+                                    UserFollowingRelationRepository userFollowingRelationRepository,
+                                    ArticleRecommended articleRecommended,
+                                    DefaultRecommended defaultRecommended,
+                                    UserProfileRecommended userProfileRecommended) {
         super(RecommendationResponse.class, sessionService);
         this.userRepository = userRepository;
-        this.chooseRecommended = chooseRecommended;
         this.userFollowingRelationRepository = userFollowingRelationRepository;
+        this.articleRecommended = articleRecommended;
+        this.defaultRecommended = defaultRecommended;
+        this.userProfileRecommended = userProfileRecommended;
     }
 
     /**
@@ -68,8 +76,7 @@ public class RecommendationHandler extends AbstractHandler<RecommendationRequest
             thisUser = optionalUser.get();
         }
 
-        List<User> recommendedUserList = chooseRecommended
-                .chooseRecommended(request.getContext())
+        List<User> recommendedUserList = chooseRecommended(request.getContext())
                 .recommendedUsers(thisUser, request);
 
         List<RecommendationInfoDto> responseList = recommendedUserList.stream()
@@ -99,5 +106,13 @@ public class RecommendationHandler extends AbstractHandler<RecommendationRequest
 
     private int findUserFollowee(int userId){
         return userFollowingRelationRepository.countByUserId(userId);
+    }
+
+    public Recommended chooseRecommended(String context){
+        Map<String, Recommended> map = new HashMap<>(8);
+        map.put(RecommendationContextEnum.DEFAULT.getValue(), defaultRecommended);
+        map.put(RecommendationContextEnum.ARTICLE.getValue(), articleRecommended);
+        map.put(RecommendationContextEnum.USER_PROFILE.getValue(), userProfileRecommended);
+        return map.get(context);
     }
 }

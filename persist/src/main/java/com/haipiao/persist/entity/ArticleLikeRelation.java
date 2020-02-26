@@ -14,8 +14,8 @@ public class ArticleLikeRelation extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "like_id")
-    private int likeId;
+    @Column(name = "user_id")
+    private int userId;
 
     @Column(name = "article_id")
     private int articleId;
@@ -26,8 +26,8 @@ public class ArticleLikeRelation extends BaseEntity {
     public ArticleLikeRelation() {
     }
 
-    public ArticleLikeRelation(int likeId, int articleId, int likerFollowerCountApproximate) {
-        this.likeId = likeId;
+    public ArticleLikeRelation(int userId, int articleId, int likerFollowerCountApproximate) {
+        this.userId = userId;
         this.articleId = articleId;
         this.likerFollowerCountApproximate = likerFollowerCountApproximate;
     }
@@ -40,12 +40,12 @@ public class ArticleLikeRelation extends BaseEntity {
         this.id = id;
     }
 
-    public int getLikeId() {
-        return likeId;
+    public int getUserId() {
+        return userId;
     }
 
-    public void setLikeId(int likeId) {
-        this.likeId = likeId;
+    public void setUserId(int userId) {
+        this.userId = userId;
     }
 
     public int getArticleId() {
@@ -69,7 +69,7 @@ public class ArticleLikeRelation extends BaseEntity {
         if (this == o) return true;
         if (!(o instanceof ArticleLikeRelation)) return false;
         ArticleLikeRelation that = (ArticleLikeRelation) o;
-        return getLikeId() == that.getLikeId() &&
+        return getUserId() == that.getUserId() &&
                 getArticleId() == that.getArticleId() &&
                 getLikerFollowerCountApproximate() == that.getLikerFollowerCountApproximate() &&
                 Objects.equals(getId(), that.getId());
@@ -77,14 +77,14 @@ public class ArticleLikeRelation extends BaseEntity {
 
     @Override
     public int hashCode() {
-        return Objects.hash(getId(), getLikeId(), getArticleId(), getLikerFollowerCountApproximate());
+        return Objects.hash(getId(), getUserId(), getArticleId(), getLikerFollowerCountApproximate());
     }
 
     @Override
     public String toString() {
         return "ArticleLikeRelation{" +
                 "id=" + id +
-                ", likeId=" + likeId +
+                ", userId=" + userId +
                 ", articleId=" + articleId +
                 ", likerFollowerCountApproximate=" + likerFollowerCountApproximate +
                 '}';

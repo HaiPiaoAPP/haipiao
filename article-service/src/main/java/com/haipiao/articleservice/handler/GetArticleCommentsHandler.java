@@ -18,6 +18,9 @@ import com.haipiao.persist.utils.PageUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -58,8 +61,8 @@ public class GetArticleCommentsHandler extends AbstractHandler<GetArticleComment
     @Override
     public GetArticleCommentsResponse execute(GetArticleCommentsRequest request) throws AppException {
         GetArticleCommentsResponse response = new GetArticleCommentsResponse(StatusCode.SUCCESS);
-        Optional<Article> article = articleRepository.findById(request.getId());
-        if (article.isEmpty()){
+        Article article = articleRepository.findByArticleId(request.getId());
+        if (article == null){
             String errorMessage = String.format("Id为%s的文章不存在!", request.getId());
             LOG.info(errorMessage);
             response = new GetArticleCommentsResponse(StatusCode.NOT_FOUND);
@@ -67,8 +70,8 @@ public class GetArticleCommentsHandler extends AbstractHandler<GetArticleComment
             return response;
         }
 
-        List<Comment> commentList = commentRepository.findByArticleIdAndLimit(request.getId(), PageUtil.cursor(request.getCursor()), PageUtil.limit(request.getLimit()));
-        List<GetArticleCommentsResponse.Data.CommentResponse> comments = commentList.stream().map(this::assemblerComment).collect(Collectors.toList());
+        Page<Comment> commentList = commentRepository.findByArticleIdAndLimit(request.getId(), new PageRequest(PageUtil.cursor(request.getCursor()), PageUtil.limit(request.getLimit())));
+        List<GetArticleCommentsResponse.Data.CommentResponse> comments = commentList.getContent().stream().map(this::assemblerComment).collect(Collectors.toList());
         long totalCount = commentRepository.findAllByArticleId(request.getId());
         boolean moreToFollow = comments.size() >= totalCount;
         response.setData(new GetArticleCommentsResponse.Data(comments, (int) totalCount, "", moreToFollow));
@@ -84,19 +87,19 @@ public class GetArticleCommentsHandler extends AbstractHandler<GetArticleComment
         List<GetArticleCommentsResponse.Data.CommentResponse.Replie> replies = assemblerReplies(comment.getCommentId());
         int repliesCount = replies.size();
         return new GetArticleCommentsResponse.Data.CommentResponse(comment.getCommentId(), comment.getTextBody(),
-                comment.getCreateTs().getTime(), comment.getLikes(), assemblerCommenter(comment.getCommentId()),
+                comment.getCreateTs().getTime(), comment.getLikes(), assemblerCommenter(comment.getAuthorId()),
                 repliesCount, replies);
     }
 
     /**
      * 评论者
-     * @param commentId
+     * @param authorId
      * @return
      */
-    private GetArticleCommentsResponse.Data.CommentResponse.Commenter assemblerCommenter(int commentId){
-        Optional<User> userOptional = userRepository.findById(commentId);
+    private GetArticleCommentsResponse.Data.CommentResponse.Commenter assemblerCommenter(int authorId){
+        Optional<User> userOptional = userRepository.findById(authorId);
         User user = userOptional.get();
-        return new GetArticleCommentsResponse.Data.CommentResponse.Commenter(commentId, user.getProfileImgUrl(), user.getUserName());
+        return new GetArticleCommentsResponse.Data.CommentResponse.Commenter(authorId, user.getProfileImgUrl(), user.getUserName());
     }
 
     /**

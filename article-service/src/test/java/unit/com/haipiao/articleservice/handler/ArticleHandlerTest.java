@@ -7,9 +7,11 @@ import com.haipiao.articleservice.dto.resp.*;
 import com.haipiao.common.config.CommonConfig;
 import com.haipiao.common.enums.StatusCode;
 import com.haipiao.common.service.SessionService;
-import com.haipiao.persist.entity.User;
+import com.haipiao.persist.entity.*;
+import com.haipiao.persist.enums.ArticleStatus;
 import com.haipiao.persist.repository.*;
 import org.assertj.core.util.Preconditions;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -25,6 +27,9 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import java.io.DataInputStream;
 import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+import java.util.Objects;
 
 import static java.util.stream.Collectors.toSet;
 import static org.junit.Assert.*;
@@ -79,22 +84,30 @@ public class ArticleHandlerTest {
         public GetUserArticleHandler getUserArticleHandler(
                 @Autowired SessionService sessionService,
                 @Autowired ArticleRepository articleRepository,
-                @Autowired ImageRepository imageRepository) {
+                @Autowired ImageRepository imageRepository,
+                @Autowired UserRepository userRepository,
+                @Autowired ArticleLikeRelationRepository articleLikeRelationRepository) {
             return new GetUserArticleHandler(
                     sessionService,
                     articleRepository,
-                    imageRepository);
+                    imageRepository,
+                    userRepository,
+                    articleLikeRelationRepository);
         }
 
         @Bean
         public GetUserCollectionHandler getUserCollectionHandler(
                 @Autowired SessionService sessionService,
                 @Autowired ArticleRepository articleRepository,
-                @Autowired ImageRepository imageRepository) {
+                @Autowired ImageRepository imageRepository,
+                @Autowired UserRepository userRepository,
+                @Autowired ArticleLikeRelationRepository articleLikeRelationRepository) {
             return new GetUserCollectionHandler(
                     sessionService,
                     articleRepository,
-                    imageRepository);
+                    imageRepository,
+                    userRepository,
+                    articleLikeRelationRepository);
         }
 
         @Bean
@@ -191,6 +204,36 @@ public class ArticleHandlerTest {
     @Autowired
     private GetArticleCommentsHandler getArticleCommentsHandler;
 
+    @Autowired
+    private ArticleRepository articleRepository;
+
+    @Autowired
+    private ArticleDislikeRelationRepository articleDislikeRelationRepository;
+
+    @Autowired
+    private CommentRepository commentRepository;
+
+    @Autowired
+    private CommentReplyRepository commentReplyRepository;
+
+    @Autowired
+    private UserFollowingRelationRepository userFollowingRelationRepository;
+
+    @Autowired
+    private ArticleLikeRelationRepository articleLikeRelationRepository;
+
+    @Autowired
+    private UserAlbumRelationRepository userAlbumRelationRepository;
+
+    @Autowired
+    private ImageRepository imageRepository;
+
+    @Autowired
+    private ArticleCollectRelationRepository articleCollectRelationRepository;
+
+    @Autowired
+    private AlbumRepository albumRepository;
+
     private int userId;
 
     @Before
@@ -198,14 +241,35 @@ public class ArticleHandlerTest {
         Preconditions.checkNotNull(createArticleHandler);
         Preconditions.checkNotNull(getArticleHandler);
 
-        User user = new User();
-        user.setUserName("blah");
-        user = userRepository.save(user);
-        this.userId = user.getUserId();
+        clearing();
+    }
+
+    @After
+    public void unitAfter(){
+        clearing();
+    }
+
+    private void clearing(){
+        userRepository.deleteAll();
+        userFollowingRelationRepository.deleteAll();
+        userAlbumRelationRepository.deleteAll();
+        articleLikeRelationRepository.deleteAll();
+        albumRepository.deleteAll();
+        articleDislikeRelationRepository.deleteAll();
+        articleCollectRelationRepository.deleteAll();
+        commentReplyRepository.deleteAll();
+        commentRepository.deleteAll();
+        imageRepository.deleteAll();
+        articleRepository.deleteAll();
     }
 
     @Test
     public void testCreateGetArticleHandler() {
+        User user = new User();
+        user.setUserName("blah");
+        user = userRepository.save(user);
+        this.userId = user.getUserId();
+
         CreateArticleRequest createReq = new CreateArticleRequest();
         createReq.setLoggedInUserId(userId);
         String title = "This is a Title";
@@ -236,14 +300,14 @@ public class ArticleHandlerTest {
         createReq.setImages(images);
 
         ResponseEntity<CreateArticleResponse> createResp = createArticleHandler.handle(createReq);
-        assertTrue(createResp.getBody().getStatusCode() == StatusCode.SUCCESS);
+        assertSame(createResp.getBody().getStatusCode(), StatusCode.SUCCESS);
         assertNotNull(createResp.getBody().getData().getId());
 
         int id = createResp.getBody().getData().getId();
         GetArticleRequest getReq = new GetArticleRequest();
         getReq.setId(id);
         ResponseEntity<GetArticleResponse> getResp = getArticleHandler.handle(getReq);
-        assertTrue(createResp.getBody().getStatusCode() == StatusCode.SUCCESS);
+        assertSame(createResp.getBody().getStatusCode(), StatusCode.SUCCESS);
         assertNotNull(getResp.getBody().getData().getAuthor());
         GetArticleResponse.ArticleData.Image[] actualImages = getResp.getBody().getData().getImages();
         assertEquals(images.length, actualImages.length);
@@ -275,19 +339,32 @@ public class ArticleHandlerTest {
      */
     @Test
     public void testGetUserArticleAndCollectionHandler() {
+        List<Integer> list = commonUserSource();
+        Image image = new Image();
+        image.setArticleId(list.get(1));
+        image.setPositionIdx(0);
+        imageRepository.save(image);
+
+        ArticleCollectRelation relation = new ArticleCollectRelation();
+        relation.setArticleId(list.get(1));
+        relation.setCollectorId(list.get(0));
+        relation.setCreateTs(new Date());
+        articleCollectRelationRepository.save(relation);
+
+
         GetArticleCommentsRequest getArticleCommentsRequest = new GetArticleCommentsRequest();
-        getArticleCommentsRequest.setId(1);
+        getArticleCommentsRequest.setId(list.get(0));
         getArticleCommentsRequest.setCursor("0");
         getArticleCommentsRequest.setLimit(6);
 
         //获取用户笔记
-        ResponseEntity<ArticleResponse> getUserArticleHandle = getUserArticleHandler.handle(getArticleCommentsRequest);
-        assertTrue(getUserArticleHandle.getBody().getStatusCode() == StatusCode.SUCCESS);
-        assertNotNull(getUserArticleHandle.getBody().getData().getArticles());
+        ResponseEntity<ArticleResponse> handle = getUserArticleHandler.handle(getArticleCommentsRequest);
+        assertSame(Objects.requireNonNull(handle.getBody()).getStatusCode(), StatusCode.SUCCESS);
+        assertNotNull(handle.getBody().getData().getArticles());
 
         //获取用户收藏笔记
         ResponseEntity<ArticleResponse> getUserCollectionHandle = getUserCollectionHandler.handle(getArticleCommentsRequest);
-        assertTrue(getUserCollectionHandle.getBody().getStatusCode() == StatusCode.SUCCESS);
+        assertSame(Objects.requireNonNull(getUserCollectionHandle.getBody()).getStatusCode(), StatusCode.SUCCESS);
         assertNotNull(getUserCollectionHandle.getBody().getData().getArticles());
     }
 
@@ -297,13 +374,31 @@ public class ArticleHandlerTest {
      */
     @Test
     public void testGetUserAlbumHandler() {
+        int id = commonAlbumSource();
+
         GetArticleCommentsRequest getArticleCommentsRequest = new GetArticleCommentsRequest();
-        getArticleCommentsRequest.setId(1);
+        getArticleCommentsRequest.setId(id);
         getArticleCommentsRequest.setCursor("0");
         getArticleCommentsRequest.setLimit(6);
         ResponseEntity<AlbumResponse> handle = getUserAlbumHandler.handle(getArticleCommentsRequest);
-        assertTrue(handle.getBody().getStatusCode() == StatusCode.SUCCESS);
+        assertSame(handle.getBody().getStatusCode(), StatusCode.SUCCESS);
         assertNotNull(handle.getBody().getData().getAlbums());
+    }
+
+    private int commonAlbumSource(){
+        List<Integer> list = commonUserSource();
+        Album album = new Album();
+        album.setUserId(list.get(0));
+        album.setAlbumName("test case album");
+        Album save = albumRepository.save(album);
+
+        UserAlbumRelation relation = new UserAlbumRelation();
+        relation.setFollowerId(list.get(0));
+        relation.setAlbumId(save.getAlbumId());
+        relation.setCreateTs(new Date());
+        userAlbumRelationRepository.save(relation);
+
+        return list.get(0);
     }
 
     /**
@@ -312,14 +407,18 @@ public class ArticleHandlerTest {
      */
     @Test
     public void testGetUserFollowerHandler() {
+        int id = commonAlbumSource();
+
         GetArticleCommentsRequest getArticleCommentsRequest = new GetArticleCommentsRequest();
-        getArticleCommentsRequest.setId(1);
+        getArticleCommentsRequest.setId(id);
         getArticleCommentsRequest.setCursor("0");
         getArticleCommentsRequest.setLimit(6);
         ResponseEntity<FollowerResponse> handle = getUserFollowerHandler.handle(getArticleCommentsRequest);
-        assertTrue(handle.getBody().getStatusCode() == StatusCode.SUCCESS);
+        assertSame(handle.getBody().getStatusCode(), StatusCode.SUCCESS);
         assertNotNull(handle.getBody().getData().getFollowers());
     }
+
+
 
     /**
      * API-12
@@ -327,11 +426,66 @@ public class ArticleHandlerTest {
      */
     @Test
     public void testDeleteAndLikeArticleHandler() {
+        List<Integer> list = commonUserSource();
+
         LikeArticleRequest likeArticleRequest = new LikeArticleRequest();
-        likeArticleRequest.setId(1);
+        likeArticleRequest.setId(list.get(1));
         likeArticleRequest.setType(1);
+        likeArticleRequest.setLoggedInUserId(list.get(0));
         ResponseEntity<LikeArticleResponse> handle = deleteAndLikeArticleHandler.handle(likeArticleRequest);
-        assertTrue(handle.getBody().getStatusCode() == StatusCode.SUCCESS);
+        assertSame(handle.getBody().getStatusCode(), StatusCode.SUCCESS);
+    }
+
+    private List<Integer> commonUserSource(){
+        User user1 = new User();
+        user1.setRealName("test case article1");
+        User save1 = userRepository.save(user1);
+
+        User user2 = new User();
+        user2.setRealName("test case article2");
+        user2.setUserName("test case name");
+        user2.setProfileImgUrl("test case url");
+        User save2 = userRepository.save(user2);
+
+        User user3 = new User();
+        user3.setRealName("test case article3");
+        User save6 = userRepository.save(user3);
+
+        Article article = new Article();
+        article.setAuthorId(save1.getUserId());
+        article.setLikes(1000);
+        article.setStatus(ArticleStatus.PUBLISHED.getCode());
+        article.setTitle("test case title");
+        Article save = articleRepository.save(article);
+
+        Comment comment = new Comment();
+        comment.setArticleId(save.getArticleId());
+        comment.setAuthorId(save2.getUserId());
+        comment.setCreateTs(new Date());
+        comment.setLikes(10);
+        comment.setTextBody("test case body");
+        Comment save4 = commentRepository.save(comment);
+
+        CommentReply reply = new CommentReply();
+        reply.setCommentId(save4.getCommentId());
+        reply.setArticleId(save.getArticleId());
+        reply.setReplierId(save6.getUserId());
+        reply.setTextBody("Test Case Reply");
+        reply.setCreateTs(new Date());
+        commentReplyRepository.save(reply);
+
+        ArticleLikeRelation articleLikeRelation = new ArticleLikeRelation();
+        articleLikeRelation.setArticleId(article.getArticleId());
+        articleLikeRelation.setUserId(save1.getUserId());
+        articleLikeRelationRepository.save(articleLikeRelation);
+
+        UserFollowingRelation relation = new UserFollowingRelation();
+        relation.setFollowingUserId(save2.getUserId());
+        relation.setUserId(save1.getUserId());
+        relation.setGroupId(1);
+        userFollowingRelationRepository.save(relation);
+
+        return Arrays.asList(save1.getUserId(), save.getArticleId());
     }
 
     /**
@@ -342,8 +496,9 @@ public class ArticleHandlerTest {
     public void testDisLikeArticleHandler() {
         DisLikeArticleRequest disLikeArticleRequest = new DisLikeArticleRequest();
         disLikeArticleRequest.setId(1);
+        disLikeArticleRequest.setLoggedInUserId(1);
         ResponseEntity<DisLikeArticleResponse> handle = disLikeArticleHandler.handle(disLikeArticleRequest);
-        assertTrue(handle.getBody().getStatusCode() == StatusCode.SUCCESS);
+        assertSame(Objects.requireNonNull(handle.getBody()).getStatusCode(), StatusCode.SUCCESS);
     }
 
     /**
@@ -352,12 +507,14 @@ public class ArticleHandlerTest {
      */
     @Test
     public void testGetArticleCommentsHandler() {
+        List<Integer> list = commonUserSource();
+
         GetArticleCommentsRequest getArticleCommentsRequest = new GetArticleCommentsRequest();
-        getArticleCommentsRequest.setId(1);
+        getArticleCommentsRequest.setId(list.get(1));
         getArticleCommentsRequest.setCursor("0");
         getArticleCommentsRequest.setLimit(6);
         ResponseEntity<GetArticleCommentsResponse> handle = getArticleCommentsHandler.handle(getArticleCommentsRequest);
-        assertTrue(handle.getBody().getStatusCode() == StatusCode.SUCCESS);
+        assertSame(handle.getBody().getStatusCode(), StatusCode.SUCCESS);
         assertNotNull(handle.getBody().getData().getComments());
     }
 }

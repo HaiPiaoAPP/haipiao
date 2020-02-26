@@ -1,6 +1,6 @@
 package com.haipiao.persist.repository;
 
-import com.haipiao.persist.entity.Article;
+
 import com.haipiao.persist.entity.ArticleLikeRelation;
 import org.springframework.data.repository.CrudRepository;
 
@@ -14,15 +14,15 @@ public interface ArticleLikeRelationRepository extends CrudRepository<ArticleLik
     /**
      * 根据文章id、用户id查询是否有记录
      * @param articleId
-     * @param likeId
+     * @param userId
      * @return
      */
-    List<ArticleLikeRelation> findByArticleIdAndAndLikeId(int articleId, int likeId);
+    List<ArticleLikeRelation> findByArticleIdAndUserId(int articleId, int userId);
 
     /**
      * 根据文章id及点赞者id删除点赞记录
-     * @param id
-     * @param likeId
+     * @param articleId
+     * @param userId
      */
-    void deleteByArticleIdAndLikeId(int id, int likeId);
+    void deleteByArticleIdAndUserId(int articleId, int userId);
 }
