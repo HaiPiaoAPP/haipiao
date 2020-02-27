@@ -175,6 +175,9 @@ public class ArticleHandlerTest {
     }
 
     @Autowired
+    private UserGroupRepository userGroupRepository;
+
+    @Autowired
     private UserRepository userRepository;
 
     @Autowired
@@ -479,10 +482,15 @@ public class ArticleHandlerTest {
         articleLikeRelation.setUserId(save1.getUserId());
         articleLikeRelationRepository.save(articleLikeRelation);
 
+        UserGroup group = new UserGroup();
+        group.setOwnerId(save1.getUserId());
+        group.setName("test case group");
+        UserGroup saveGroup = userGroupRepository.save(group);
+
         UserFollowingRelation relation = new UserFollowingRelation();
         relation.setFollowingUserId(save2.getUserId());
         relation.setUserId(save1.getUserId());
-        relation.setGroupId(1);
+        relation.setGroupId(saveGroup.getGroupId());
         userFollowingRelationRepository.save(relation);
 
         return Arrays.asList(save1.getUserId(), save.getArticleId());

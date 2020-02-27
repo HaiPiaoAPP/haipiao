@@ -251,7 +251,7 @@ create table user_album_relation
     update_ts   timestamp,
     constraint user_album_relation_pk primary key (id),
     constraint user_album_relation_fk1 foreign key (album_id) references album (album_id),
-    constraint user_album_relation_fk2 foreign key (follower_id) references article (article_id)
+    constraint user_album_relation_fk2 foreign key (follower_id) references hp_user (user_id)
 );
 
 -- 文章与点赞用户关系表（N : N）
