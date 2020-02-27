@@ -241,12 +241,12 @@ public class ArticleHandlerTest {
         Preconditions.checkNotNull(createArticleHandler);
         Preconditions.checkNotNull(getArticleHandler);
 
-        clearing();
+//        clearing();
     }
 
     @After
     public void unitAfter(){
-        clearing();
+//        clearing();
     }
 
     private void clearing(){
