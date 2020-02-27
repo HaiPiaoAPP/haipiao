@@ -1388,6 +1388,229 @@ tag中的x和y都是int，x表示的浮点数是0.001*x。
 - `UNAUTHORIZED`: session token不存在或不合法。
 - `INTERNAL_SERVER_ERROR`: 未知服务器错误。
 
+### 31. 获取用户所有文章
+以分页的方式获取当前用户所有的文章。
+
+**URL**: `/user/{id}/article`
+
+**Method**: GET
+
+**Parameters**:
+
+| Name | Type        | Required | Description                         |
+| ---- | ----------- | -------- | ----------------------------------- |
+| id | Integer  | yes      | 用户id |
+
+**Required headers**: `Cookie: session-token=<token>`
+
+**Response body**:
+
+**Success**:
+
+```javascript
+{
+  "status_code": "SUCCESS",
+  "data": {
+    "articles": [
+      {
+        "cover_image_url": <string>,
+        "id": <integer>,
+        "title": <string>,
+        "author": {
+          "id": <integer>,
+          "name": <string>,
+          "profile_image_url": <string>  
+        },
+        "likes": <integer>,
+        "liked": <boolean>
+      }
+    ],
+    "total_count": <integer>,
+    "cursor": <string>,
+    "more_to_follow": <boolean> 
+  }
+}
+```
+
+**Fail**
+
+```javascript
+{
+  "status_code": <String>,
+  "error_message": <String>
+}
+```
+
+**Possible error codes**:
+
+- `BAD_REQUEST`: query parameter不存在或不合法。
+- `UNAUTHORIZED`: session token不存在或不合法。
+- `INTERNAL_SERVER_ERROR`: 未知服务器错误。
+
+### 38. 加载评论列表
+
+对于每条评论，显示评论者昵称，评论时间，评论的前2条回复，点赞数，是否已为评论点赞，回复总数。
+
+**URL**: `/article/{id}/comment?limit=<interger>&cursor=<string>`
+
+**Method**: GET
+
+**Parameters**:
+
+| Name | Type        | Required | Description                         |
+| ---- | ----------- | -------- | ----------------------------------- |
+| limit | Integer  | false      | 默认值为6 |
+| cursor | String | false | 如果缺省，则默认从头开始 |
+
+**Required headers**: `Cookie: session-token=<token>`
+
+**Response body**:
+
+**Success**:
+
+```javascript
+{
+  "status_code": "SUCCESS",
+  "data": {
+    "comments": [
+      {
+        "id": <integer>
+        "content": <string>,
+        "commented_time": <long>,
+        "likes": <integer>,
+        "commenter": { // 评论者信息
+          "id": <integer>,
+          "profile_image_url": <string>,
+          "name": <string>,
+        },
+        "replies_count" : <integer>,
+        "replies": [  // 评论的回复，只加载两条
+          {
+            "replier": {
+              "id": <integer>,
+              "name": <string>
+            }
+            "content": <string>
+          }
+        ]
+      }  
+    ],
+    "total_count": <integer>, 
+    "cursor": <string>,
+    "more_to_follow": <boolean>
+  }
+}  
+```
+
+Note: 如果被回复者是评论者, replyee_name和replyee_id会不存在。只有当被回复者不是评论者时，这两项才会被返回。
+
+**Fail**
+
+```javascript
+{
+  "status_code": <String>,
+  "error_message": <String>
+}
+```
+
+**Possible error codes**:
+
+- `BAD_REQUEST`: query parameter不存在或不合法。
+- `UNAUTHORIZED`: session token不存在或不合法。
+- `INTERNAL_SERVER_ERROR`: 未知服务器错误。
+
+### 39. 加载一条评论和回复
+
+除评论的详细内容外，还加载回复内容，回复者昵称，回复时间，回复的点赞数，被回复的人。
+
+**URL**: `/comment/{id}`
+
+**Method**: GET
+
+**Required headers**: `Cookie: session-token=<token>`
+
+**Response body**:
+
+**Success**:
+```javascript
+{
+  "status_code": "SUCCESS"，
+  "data": {
+    "commenter" : {
+      "id" : <integer>,
+      "name" : <string>,
+      "profile_image_url" : <string>,
+    },
+    "likes": <integer>,
+    "liked" : <boolean>,
+    "content": <string>,
+    "commented_time": <long>
+    "replies": [
+      {
+        "replier": {
+          "id": <integer>,
+          "name": <string>,
+          "profile_image_url": <string>
+        },
+        "replyee_name": <string>, // 被回复人的名字
+        "replyee_id": <integer>, // 被回复人的ID
+        "likes": <integer>,
+        "liked": <boolean>,
+        "content": <string>,
+        "replied_time": <long>
+      }, 
+      ...
+    ]  
+  }
+}
+```
+
+**Fail**
+
+```javascript
+{
+  "status_code": <String>,
+  "error_message": <String>
+}
+```
+
+**Possible error codes**:
+
+- `BAD_REQUEST`: query parameter不存在或不合法。
+- `UNAUTHORIZED`: session token不存在或不合法。
+- `INTERNAL_SERVER_ERROR`: 未知服务器错误。
+
+### 44. 删除文章
+**URL**: `/article/{id}`
+
+**Method**: DELETE
+
+**Required headers**: `Cookie: session-token=<token>`
+
+**Response body**:
+
+**Success**:
+
+```javascript
+{
+  "status_code": "SUCCESS",
+}
+```
+
+**Fail**
+
+```javascript
+{
+  "status_code": <String>,
+  "error_message": <String>
+}
+```
+
+**Possible error codes**:
+
+- `BAD_REQUEST`: query parameter不存在或不合法。
+- `UNAUTHORIZED`: session token不存在或不合法。
+- `INTERNAL_SERVER_ERROR`: 未知服务器错误。
 
 ## TODO: complete APIs below
 
@@ -1427,7 +1650,7 @@ pull： 获取所有更新信息
 
 ### 31. 获取用户所有文章
 
-###  32. 更改已关注用户的分组
+### 32. 更改已关注用户的分组
 
 ### 33. 取消关注
 
@@ -1497,14 +1720,6 @@ TODO: decide how to handle user itself
 
 被举报用户ID，原因，图片
 
-### 38. 加载评论列表
-
-评论者昵称，评论时间，前2条回复，点赞数，是否已为评论点赞，回复总数
-
-### 39. 加载一条评论和回复
-
-回复内容，回复者昵称，回复时间，回复的点赞数，被回复的人
-
 ### 40. 收藏文章到专辑
 
  参数：文章ID，专辑ID，
@@ -1515,13 +1730,11 @@ TODO: decide how to handle user itself
 
 ### 43. 移动文章到新的专辑
 
-### 44. 删除文章
-
 ### 45. 编辑专辑
 
  参数：标题，简介，可见性
 
-### 46.  删除专辑
+### 46. 删除专辑
 
 ### 47. 获取已关注用户列表
 
