@@ -75,8 +75,9 @@ public class DeleteGroupHandler extends AbstractHandler<DeleteGroupRequest, Oper
             resp.setErrorMessage(String.format("%s 不属于 %s 用户",groupId, userId));
             return resp;
         }
-        userFollowingRelationRepository.updateGroupIdByGroupIdAndUserId(groupId,userId,0);
-        userRepository.deleteById(userId);
+        userFollowingRelationRepository.updateGroupIdByGroupIdAndUserId(groupId,userId,1);
+        // TODO  删除当前用户的指定分组： 分组id改为1(默认分组)后，为什么要删除当前用户 to wangshun
+        //userRepository.deleteById(userId);
         return new OperateResponse(SUCCESS);
     }
 

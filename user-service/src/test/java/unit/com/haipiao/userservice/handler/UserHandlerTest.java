@@ -25,6 +25,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import javax.annotation.Resource;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -154,7 +155,6 @@ public class UserHandlerTest {
     @Autowired
     private GetUserFollowerHandler getUserFollowerHandler;
 
-
     @Autowired
     private UserGroupRepository userGroupRepository;
 
@@ -163,6 +163,65 @@ public class UserHandlerTest {
 
     @Autowired
     private UserFollowingRelationRepository userFollowingRelationRepository;
+
+    @Autowired
+    private ArticleDislikeRelationRepository articleDislikeRelationRepository;
+
+    @Autowired
+    private ArticleRepository articleRepository;
+
+    @Autowired
+    private CommentRepository commentRepository;
+
+    @Autowired
+    private CommentReplyRepository commentReplyRepository;
+
+    @Autowired
+    private ArticleLikeRelationRepository articleLikeRelationRepository;
+
+    @Autowired
+    private UserAlbumRelationRepository userAlbumRelationRepository;
+
+    @Autowired
+    private ImageRepository imageRepository;
+
+    @Autowired
+    private ArticleCollectRelationRepository articleCollectRelationRepository;
+
+    @Autowired
+    private AlbumRepository albumRepository;
+
+    @Autowired
+    private TagRepository tagRepository;
+
+    @Autowired
+    private ArticleTopicRepository articleTopicRepository;
+
+    @Autowired
+    private UserSessionRepository userSessionRepository;
+
+    public void clearing(){
+        userCategoryRelationRepository.deleteAll();
+        categoryRepository.deleteAll();
+        userFollowingRelationRepository.deleteAll();
+        userGroupRepository.deleteAll();
+
+        articleCollectRelationRepository.deleteAll();
+        articleDislikeRelationRepository.deleteAll();
+        articleLikeRelationRepository.deleteAll();
+        tagRepository.deleteAll();
+        imageRepository.deleteAll();
+        commentReplyRepository.deleteAll();
+        commentRepository.deleteAll();
+        userAlbumRelationRepository.deleteAll();
+        albumRepository.deleteAll();
+
+        articleTopicRepository.deleteAll();
+        articleRepository.deleteAll();
+
+        userSessionRepository.deleteAll();
+        userRepository.deleteAll();
+    }
 
     @Before
     public void setUp() {
@@ -173,20 +232,13 @@ public class UserHandlerTest {
         Preconditions.checkNotNull(getUserAllCategoryHandler);
         Preconditions.checkNotNull(saveCategoryHandler);
         Preconditions.checkNotNull(followeeUserHandler);
+
         clearing();
     }
 
     @After
     public void unitAfter(){
         clearing();
-    }
-
-    private void clearing(){
-        userRepository.deleteAll();
-        userCategoryRelationRepository.deleteAll();
-        userFollowingRelationRepository.deleteAll();
-        userGroupRepository.deleteAll();
-        categoryRepository.deleteAll();
     }
 
     @Test
@@ -220,6 +272,7 @@ public class UserHandlerTest {
 
     @Test
     public void testGetUserAllCategoryHandler(){
+        categoryRepository.deleteAll();
         int userId = commonCategorySource(saveCategories());
 
         GetUserAllCategoryRequest request = new GetUserAllCategoryRequest();
@@ -266,17 +319,17 @@ public class UserHandlerTest {
 
     private List<Integer> saveCategories(){
         Category category1 = new Category();
-        category1.setCategoryName("test case1");
+        category1.setCategoryName("test");
         category1.setType(GetCategoryEnum.DEFAULT.getValue());
         Category save1 = categoryRepository.save(category1);
 
         Category category2 = new Category();
-        category2.setCategoryName("test case2");
+        category2.setCategoryName("test2");
         category2.setType(GetCategoryEnum.HOT.getValue());
         Category save2 = categoryRepository.save(category2);
 
         Category category3 = new Category();
-        category3.setCategoryName("test case3");
+        category3.setCategoryName("test3");
         category3.setType(GetCategoryEnum.MISC.getValue());
         Category save3 = categoryRepository.save(category3);
 
@@ -335,6 +388,8 @@ public class UserHandlerTest {
         user.setRealName("test case user1");
         User save = userRepository.save(user);
 
+        userGroupRepository.saveByHandle(1, save.getUserId(), "ALL");
+
         UserGroup group = new UserGroup();
         group.setOwnerId(save.getUserId());
         group.setType("ALL");
@@ -352,10 +407,14 @@ public class UserHandlerTest {
         deleteGroupRequest.setLoggedInUserId(source.getOwnerId());
         deleteGroupRequest.setId(source.getGroupId());
 
+        User user = new User();
+        user.setRealName("test");
+        User save = userRepository.save(user);
+
         UserFollowingRelation relation = new UserFollowingRelation();
         relation.setGroupId(source.getGroupId());
         relation.setUserId(source.getOwnerId());
-        relation.setFollowingUserId(33);
+        relation.setFollowingUserId(save.getUserId());
         userFollowingRelationRepository.save(relation);
 
         ResponseEntity<OperateResponse> handle = deleteGroupHandler.handle(deleteGroupRequest);
@@ -368,9 +427,11 @@ public class UserHandlerTest {
      */
     @Test
     public void testCreateGroupHandler() {
+        UserGroup group = commonSource();
+
         CreateGroupRequest createGroupRequest = new CreateGroupRequest();
-        createGroupRequest.setLoggedInUserId(1);
-        createGroupRequest.setGroupName("分组测试1");
+        createGroupRequest.setLoggedInUserId(group.getOwnerId());
+        createGroupRequest.setGroupName(group.getName());
         ResponseEntity<OperateResponse> handle = createGroupHandler.handle(createGroupRequest);
         assertSame(Objects.requireNonNull(handle.getBody()).getStatusCode(), StatusCode.SUCCESS);
     }

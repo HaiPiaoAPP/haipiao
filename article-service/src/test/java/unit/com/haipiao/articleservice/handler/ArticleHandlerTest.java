@@ -25,7 +25,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.io.DataInputStream;
+import javax.annotation.Resource;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -211,9 +211,6 @@ public class ArticleHandlerTest {
     private ArticleRepository articleRepository;
 
     @Autowired
-    private ArticleDislikeRelationRepository articleDislikeRelationRepository;
-
-    @Autowired
     private CommentRepository commentRepository;
 
     @Autowired
@@ -239,31 +236,59 @@ public class ArticleHandlerTest {
 
     private int userId;
 
+    @Autowired
+    private ArticleDislikeRelationRepository articleDislikeRelationRepository;
+
+    @Autowired
+    private UserCategoryRelationRepository userCategoryRelationRepository;
+
+    @Autowired
+    private ArticleTopicRepository articleTopicRepository;
+
+    @Autowired
+    private CategoryRepository categoryRepository;
+
+    @Autowired
+    private TagRepository tagRepository;
+
+    @Autowired
+    private UserSessionRepository userSessionRepository;
+
+    public void clearing(){
+        userCategoryRelationRepository.deleteAll();
+        categoryRepository.deleteAll();
+        userFollowingRelationRepository.deleteAll();
+        userGroupRepository.deleteAll();
+
+        articleCollectRelationRepository.deleteAll();
+        articleDislikeRelationRepository.deleteAll();
+        articleLikeRelationRepository.deleteAll();
+        tagRepository.deleteAll();
+        imageRepository.deleteAll();
+        commentReplyRepository.deleteAll();
+        commentRepository.deleteAll();
+        userAlbumRelationRepository.deleteAll();
+        albumRepository.deleteAll();
+
+        articleTopicRepository.deleteAll();
+        articleRepository.deleteAll();
+
+        userSessionRepository.deleteAll();
+        userRepository.deleteAll();
+    }
+
+
     @Before
     public void setUp() {
         Preconditions.checkNotNull(createArticleHandler);
         Preconditions.checkNotNull(getArticleHandler);
 
-//        clearing();
+        clearing();
     }
 
     @After
     public void unitAfter(){
-//        clearing();
-    }
-
-    private void clearing(){
-        userRepository.deleteAll();
-        userFollowingRelationRepository.deleteAll();
-        userAlbumRelationRepository.deleteAll();
-        articleLikeRelationRepository.deleteAll();
-        albumRepository.deleteAll();
-        articleDislikeRelationRepository.deleteAll();
-        articleCollectRelationRepository.deleteAll();
-        commentReplyRepository.deleteAll();
-        commentRepository.deleteAll();
-        imageRepository.deleteAll();
-        articleRepository.deleteAll();
+        clearing();
     }
 
     @Test
@@ -502,9 +527,11 @@ public class ArticleHandlerTest {
      */
     @Test
     public void testDisLikeArticleHandler() {
+        List<Integer> list = commonUserSource();
+
         DisLikeArticleRequest disLikeArticleRequest = new DisLikeArticleRequest();
-        disLikeArticleRequest.setId(1);
-        disLikeArticleRequest.setLoggedInUserId(1);
+        disLikeArticleRequest.setId(list.get(1));
+        disLikeArticleRequest.setLoggedInUserId(list.get(0));
         ResponseEntity<DisLikeArticleResponse> handle = disLikeArticleHandler.handle(disLikeArticleRequest);
         assertSame(Objects.requireNonNull(handle.getBody()).getStatusCode(), StatusCode.SUCCESS);
     }
