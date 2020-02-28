@@ -76,8 +76,7 @@ public class DeleteGroupHandler extends AbstractHandler<DeleteGroupRequest, Oper
             return resp;
         }
         userFollowingRelationRepository.updateGroupIdByGroupIdAndUserId(groupId,userId,1);
-        // TODO  删除当前用户的指定分组： 分组id改为1(默认分组)后，为什么要删除当前用户 to wangshun
-        //userRepository.deleteById(userId);
+        userGroupRepository.deleteById(groupId);
         return new OperateResponse(SUCCESS);
     }
 
