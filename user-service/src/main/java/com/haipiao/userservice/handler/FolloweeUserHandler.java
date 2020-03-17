@@ -32,9 +32,12 @@ public class FolloweeUserHandler extends AbstractHandler<FolloweeUserRequest, Fo
     @Autowired
     private UserFollowingRelationRepository userFollowingRelationRepository;
 
-    protected FolloweeUserHandler(SessionService sessionService, UserRepository userRepository) {
+    protected FolloweeUserHandler(SessionService sessionService,
+                                  UserRepository userRepository,
+                                  UserFollowingRelationRepository userFollowingRelationRepository) {
         super(FolloweeUserResponse.class, sessionService);
         this.userRepository = userRepository;
+        this.userFollowingRelationRepository = userFollowingRelationRepository;
     }
 
     /**
@@ -46,18 +49,18 @@ public class FolloweeUserHandler extends AbstractHandler<FolloweeUserRequest, Fo
      */
     @Override
     protected FolloweeUserResponse execute(FolloweeUserRequest request) {
-        int followingUserId = request.getLoggedInUserId();
-        Optional<User> user = userRepository.findById(request.getFolloweeId());
-        if (!user.isPresent()){
+        int userId = request.getLoggedInUserId();
+        Optional<User> followUser = userRepository.findById(request.getFolloweeId());
+        if (!followUser.isPresent()){
             String errorMessage = String.format("当前关注用户不存在, Id:%s", request.getFolloweeId());
             LOG.info(errorMessage);
             FolloweeUserResponse response = new FolloweeUserResponse(StatusCode.BAD_REQUEST);
             response.setErrorMessage(errorMessage);
             return response;
         }
-        userFollowingRelationRepository.save(new UserFollowingRelation(user.get().getUserId(), followingUserId, request.getGroupId()));
+        userFollowingRelationRepository.save(new UserFollowingRelation(followUser.get().getUserId(), userId, request.getGroupId()));
 
-        saveFolloweeUserToRedis(followingUserId, user.get().getUserId());
+        saveFolloweeUserToRedis(userId, followUser.get().getUserId());
         return new FolloweeUserResponse(StatusCode.SUCCESS);
     }
 

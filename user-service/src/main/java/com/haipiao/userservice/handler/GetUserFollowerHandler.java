@@ -13,6 +13,10 @@ import com.haipiao.userservice.resp.GetUserFollowerResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -34,8 +38,11 @@ public class GetUserFollowerHandler extends AbstractHandler<GetUserFollowerReque
     @Autowired
     private UserFollowingRelationRepository userFollowingRelationRepository;
 
-    protected GetUserFollowerHandler(SessionService sessionService, UserFollowingRelationRepository userFollowingRelationRepository) {
+    protected GetUserFollowerHandler(SessionService sessionService,
+                                     UserRepository userRepository,
+                                     UserFollowingRelationRepository userFollowingRelationRepository) {
         super(GetUserFollowerResponse.class, sessionService);
+        this.userRepository = userRepository;
         this.userFollowingRelationRepository = userFollowingRelationRepository;
     }
 
@@ -45,8 +52,9 @@ public class GetUserFollowerHandler extends AbstractHandler<GetUserFollowerReque
 
         int cursor = PageUtil.cursor(request.getCursor());
         int limit = PageUtil.limit(request.getLimit());
-        List<Integer> followingIds = userFollowingRelationRepository.findUserFollowingIdsByUserId(request.getId(), cursor, limit);
-        if (followingIds == null || followingIds.size() <= 0){
+        Page<Integer> pageIds = userFollowingRelationRepository.findUserFollowingIdsByUserId(request.getId(), new PageRequest(cursor, limit));
+        List<Integer> followingIds = pageIds.getContent();
+        if (followingIds.size() <= 0){
             String errorMessage = String.format("%s: 当前用户无粉丝", request.getId());
             LOGGER.info(errorMessage);
             response = new GetUserFollowerResponse(StatusCode.NOT_FOUND);

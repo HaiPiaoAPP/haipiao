@@ -51,7 +51,7 @@ public abstract class AbstractRecommendationArticle implements RecommendationArt
     }
 
     private boolean checkIsLike(int userId, int articleId){
-        List<ArticleLikeRelation> likeRelations = articleLikeRelationRepository.findByArticleIdAndAndLikeId(articleId, userId);
+        List<ArticleLikeRelation> likeRelations = articleLikeRelationRepository.findByArticleIdAndUserId(articleId, userId);
         return likeRelations.size() > 0;
     }
 }

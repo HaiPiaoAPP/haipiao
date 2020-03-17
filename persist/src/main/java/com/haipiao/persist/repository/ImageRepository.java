@@ -5,6 +5,7 @@ import java.util.List;
 import com.haipiao.persist.entity.Image;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.query.Param;
 
 public interface ImageRepository extends CrudRepository<Image, Integer> {
     List<Image> findByArticleIdOrderByPositionIdxAsc(int articleID);
@@ -16,8 +17,8 @@ public interface ImageRepository extends CrudRepository<Image, Integer> {
      * @param positionIndex
      * @return
      */
-    @Query(value = "select * from image where article_id = ?1 and position_index = ?2", nativeQuery = true)
-    Image findFirstByArticleId(Integer articleId, int positionIndex);
+    @Query(value = "select * from image where article_id = :articleId and position_index = :positionIndex", nativeQuery = true)
+    Image findFirstByArticleId(@Param("articleId") Integer articleId, @Param("positionIndex") int positionIndex);
 
     /**
      * 根据albumId查询文章的图片

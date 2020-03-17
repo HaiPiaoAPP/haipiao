@@ -18,6 +18,9 @@ public class Album extends BaseEntity {
     @Column(name = "album_name")
     private String albumName;
 
+    public Album() {
+    }
+
     public Album(int userId, String albumName) {
         this.userId = userId;
         this.albumName = albumName;

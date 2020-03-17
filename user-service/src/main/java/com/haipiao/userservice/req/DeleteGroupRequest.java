@@ -10,6 +10,9 @@ public class DeleteGroupRequest extends AbstractRequest {
     @SerializedName("id")
     private Integer id;
 
+    public DeleteGroupRequest() {
+    }
+
     public DeleteGroupRequest(Integer id) {
         this.id = id;
     }

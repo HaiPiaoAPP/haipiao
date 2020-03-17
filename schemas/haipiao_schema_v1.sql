@@ -70,7 +70,7 @@ create table user_group
 (
     group_id  serial,     -- 主键
     owner_id  integer,    -- 分组创建者的id
-    name      integer,    -- 分组名
+    name      varchar(50),    -- 分组名
     type      varchar(8), -- 分类类型，例如：热门（hot），其他（misc）, 默认（default）等
     create_ts timestamp,
     update_ts timestamp,
@@ -251,7 +251,7 @@ create table user_album_relation
     update_ts   timestamp,
     constraint user_album_relation_pk primary key (id),
     constraint user_album_relation_fk1 foreign key (album_id) references album (album_id),
-    constraint user_album_relation_fk2 foreign key (follower_id) references article (article_id)
+    constraint user_album_relation_fk2 foreign key (follower_id) references hp_user (user_id)
 );
 
 -- 文章与点赞用户关系表（N : N）

@@ -42,17 +42,12 @@ public class SaveCategoryHandler extends AbstractHandler<SaveUserCategoryRequest
     private CategoryRepository categoryRepository;
 
     @Autowired
-    private RedisClientWrapper redisClient;
-
-    @Autowired
     private UserCategoryRelationRepository userCategoryRelationRepository;
 
     protected SaveCategoryHandler(SessionService sessionService,
-                                  UserCategoryRelationRepository userCategoryRelationRepository,
-                                  RedisClientWrapper redisClient) {
+                                  UserCategoryRelationRepository userCategoryRelationRepository) {
         super(SaveUserCategoryResponse.class, sessionService);
         this.userCategoryRelationRepository = userCategoryRelationRepository;
-        this.redisClient = redisClient;
     }
 
     /**

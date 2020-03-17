@@ -31,10 +31,4 @@ public enum GetCategoryEnum {
         List<String> collect = Arrays.stream(values).map(GetCategoryEnum::getValue).collect(Collectors.toList());
         return collect.contains(type);
     }
-
-    public static void main(String[] args) {
-        System.out.println(111);
-    }
-
-
 }
