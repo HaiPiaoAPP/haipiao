@@ -84,7 +84,7 @@ steps:
 
 
 secrets:
-  - kmsKeyName: 'projects/haipiao-dev/locations/global/keyRings/hp-keyring/cryptoKeys/haipiao-docker'
+  - kmsKeyName: 'projects/haipiao-dev-269605/locations/global/keyRings/hp-keyring/cryptoKeys/haipiao-docker'
     secretEnv: # https://cloud.google.com/cloud-build/docs/securing-builds/use-encrypted-secrets-credentials
       PASSWORD: 'CiQArxI6daXQg9anuxo00iqeZhBCgF2bQwSpxRtdt6Okcnh2weoSMwBOtpuBAvxb5Uoi/6lbk1YvNCxMewMF9HcCqZ214gMsCtN4Gu/bwXO6ysu4AXRE5x5f1w=='
 timeout: 600s
