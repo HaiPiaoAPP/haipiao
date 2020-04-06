@@ -54,7 +54,7 @@ steps:
     id: kubectl-create-ns
     waitFor: ['-']
     env:
-      - 'CLOUDSDK_COMPUTE_ZONE=asia-east2-a'
+      - 'CLOUDSDK_COMPUTE_ZONE=asia-east1-b'
       - 'CLOUDSDK_CONTAINER_CLUSTER=hp-cluster'
 
   - name: 'gcr.io/$PROJECT_ID/kustomize'
@@ -67,7 +67,7 @@ steps:
       - docker-push-article-service
     env:
       - 'APPLY=true'
-      - 'CLOUDSDK_COMPUTE_ZONE=asia-east2-a'
+      - 'CLOUDSDK_COMPUTE_ZONE=asia-east1-b'
       - 'CLOUDSDK_CONTAINER_CLUSTER=hp-cluster'
       - 'GCLOUD_PROJECT=haipiao-dev'
 
@@ -78,15 +78,15 @@ steps:
       - kustomize-deploy-0-replicas
     env:
       - 'APPLY=true'
-      - 'CLOUDSDK_COMPUTE_ZONE=asia-east2-a'
+      - 'CLOUDSDK_COMPUTE_ZONE=asia-east1-b'
       - 'CLOUDSDK_CONTAINER_CLUSTER=hp-cluster'
-      - 'GCLOUD_PROJECT=haipiao-dev'
+      - 'GCLOUD_PROJECT= haipiao-dev-269605'
 
 
 secrets:
-  - kmsKeyName: 'projects/haipiao-dev/locations/global/keyRings/haipiao-keyring/cryptoKeys/haipiao-docker'
-    secretEnv:
-      PASSWORD: 'CiQAWjwyCkAV9LwKEbyW6PqT3moVBoQowQdfPND4NaFFnEvNl8cSMwA7UXFh9aDjNWBSB3aAccG4jGaOTDQ5D0dHOK1sSMgUathmwr+OLbsVkOUf26Qxfjl97A=='
+  - kmsKeyName: 'projects/haipiao-dev/locations/global/keyRings/hp-keyring/cryptoKeys/haipiao-docker'
+    secretEnv: # https://cloud.google.com/cloud-build/docs/securing-builds/use-encrypted-secrets-credentials
+      PASSWORD: 'CiQArxI6daXQg9anuxo00iqeZhBCgF2bQwSpxRtdt6Okcnh2weoSMwBOtpuBAvxb5Uoi/6lbk1YvNCxMewMF9HcCqZ214gMsCtN4Gu/bwXO6ysu4AXRE5x5f1w=='
 timeout: 600s
 substitutions:
   _ARTICLE_SERVICE_VERSION: 0.0.1
